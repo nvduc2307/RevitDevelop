@@ -18,7 +18,7 @@ namespace RevitDevelop.Tools.CreateRebarNumbering
         public override void Execute()
         {
             AC.GetInformation(UiDocument);
-            using (var tsg = new TransactionGroup(Document, "name transaction group"))
+            using (var tsg = new TransactionGroup(Document, "Already Numbering"))
             {
                 tsg.Start();
                 try
