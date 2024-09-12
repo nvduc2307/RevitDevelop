@@ -3,10 +3,10 @@ using Autodesk.Revit.DB.Structure;
 using HcBimUtils.DocumentUtils;
 using Newtonsoft.Json;
 using Nice3point.Revit.Toolkit.External;
+using RevitDevelop.Utils.NumberingRevitElements;
 using System.Diagnostics;
 using Utils.Entities;
 using Utils.FilterElements;
-using Utils.NumberingRevitElements;
 
 namespace RevitDevelop.Tools.CreateRebarNumbering
 {
@@ -47,7 +47,7 @@ namespace RevitDevelop.Tools.CreateRebarNumbering
                     {
                         ts.Start();
                         //--------
-                        var results = NumberingRevitRebar.NumberingRebars(rebars, optionsNumbering, schemaRebarNumberingInfo);
+                        var results = NumberingRevitRebar.Numbering(rebars, optionsNumbering, schemaRebarNumberingInfo);
                         //--------
                         ts.Commit();
                     }
