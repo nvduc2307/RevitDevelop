@@ -2,11 +2,12 @@
 {
     public class SchemaField
     {
-        public string Name { get; set; }
+        public string Name { get; }
         public string Value { get; set; }
         public SchemaField()
         {
-
+            Name = "Content";
+            Value = "";
         }
     }
 }

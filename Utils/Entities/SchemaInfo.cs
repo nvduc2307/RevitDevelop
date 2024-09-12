@@ -7,11 +7,13 @@ namespace Utils.Entities
         public string SchemaGuidID { get; }
         public string SchemaName { get; }
         public SchemaField SchemaField { get; }
+        public Schema SchemaBase { get; }
         public SchemaInfo(string schemaGuidID, string schemaName, SchemaField schemaField)
         {
             SchemaGuidID = schemaGuidID;
             SchemaName = schemaName;
             SchemaField = schemaField;
+            SchemaBase = CreateBaseSchema(SchemaGuidID, SchemaName, SchemaField);
         }
 
         public static Schema CreateBaseSchema(string schemaGuidID, string schemaName, SchemaField schemaField)
@@ -46,28 +48,6 @@ namespace Utils.Entities
             if (entity != null && entity.IsValid())
                 views = entity.Get<string>(field);
             return views;
-        }
-
-        public static SchemaField ReadAll(Schema schemaBase, SchemaField schemaField, Element element)
-        {
-            SchemaField results = null;
-            if (schemaBase != null)
-            {
-                var field = schemaBase.GetField(schemaField.Name);
-                if (field != null)
-                {
-                    var entity = element?.GetEntity(schemaBase);
-                    if (entity != null && entity.IsValid())
-                    {
-                        results = new SchemaField()
-                        {
-                            Name = schemaField.Name,
-                            Value = entity.Get<string>(field),
-                        };
-                    }
-                }
-            }
-            return results;
         }
     }
 }

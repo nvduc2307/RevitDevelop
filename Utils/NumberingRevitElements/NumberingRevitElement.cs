@@ -1,118 +1,184 @@
 ﻿using Autodesk.Revit.DB.Structure;
 using HcBimUtils;
+using HcBimUtils.RebarUtils;
+using Newtonsoft.Json;
+using Utils.Entities;
 
 namespace Utils.NumberingRevitElements
 {
-    public class NumberingRevitElement
+    public abstract class NumberingRevitElement
     {
-        public const string ShareParam_Prefix = "Prefix";
-        public const string ShareParam_Zone = "Zone";
-        public const string ShareParam_GroupElevation = "GroupElevation";
-        public static List<List<Rebar>> NumberingRebars(Document document, List<Rebar> rebarsBase, List<OptionNumberingTypeRebar> optionNumberingTypeRebars)
+        public long ElementId { get; set; }
+        public string Name { get; set; }
+        public string Prefix { get; set; }
+        public string Zone { get; set; }
+        public string ElementPosition { get; set; } //[prefix + auto number]
+    }
+
+    public class NumberingRevitRebar : NumberingRevitElement
+    {
+        public string GroupElevation { get; set; }
+        public double Diameter { get; set; } //[mm]
+        public double LengthPerOne { get; set; }// [mm]
+        public double TotalLength { get; set; }// [mm]
+        public double WeightPerOne { get; set; }// [kg]
+        public double TotalWeight { get; set; }// [kg]
+        public long Quantity { get; set; }
+        public bool StartThread { get; set; } // Ren
+        public bool EndThread { get; set; } // Ren
+        public long CouplerCount { get; set; }
+        public NumberingRevitRebar(Rebar rebar)
         {
-            var rebarsOptionWrap = new List<List<Rebar>>();
-            try
+            ElementId = long.Parse(rebar.Id.ToString());
+            Diameter = rebar.get_Parameter(BuiltInParameter.REBAR_MODEL_BAR_DIAMETER).AsDouble().FootToMm();
+            Name = rebar.GetRebarBarType().Name;
+            GroupElevation = GetGroupElevation(rebar);
+            Prefix = GetPrefix(rebar);
+            Zone = GetZone(rebar);
+            Quantity = rebar.get_Parameter(BuiltInParameter.REBAR_ELEM_QUANTITY_OF_BARS).AsInteger();
+            LengthPerOne = Math.Round(rebar.get_Parameter(BuiltInParameter.REBAR_ELEM_LENGTH).AsDouble().FootToMm(), 0);
+            TotalLength = LengthPerOne * Quantity;
+            WeightPerOne = GetWeightPerOne();
+            TotalWeight = WeightPerOne * Quantity;
+            StartThread = GetStartThread(rebar);
+            EndThread = GetEndThread(rebar);
+            CouplerCount = GetCouplerCount();
+        }
+        public NumberingRevitRebar()
+        {
+
+        }
+        private long GetCouplerCount()
+        {
+            var result = 0;
+            if (StartThread) result++;
+            if (EndThread) result++;
+            return result;
+        }
+        private bool GetStartThread(Rebar rebar)
+        {
+            var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.StartThread.ToString());
+            return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.StartThread.ToString()).AsInteger() == 1 : false;
+        }
+        private bool GetEndThread(Rebar rebar)
+        {
+            var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.EndThread.ToString());
+            return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.EndThread.ToString()).AsInteger() == 1 : false;
+        }
+        private double GetWeightPerOne()
+        {
+            var tlr = 7850.0; //[kg/m3]
+            var d = Diameter * 1e-3; //[m]
+            var s = 0.25 * Math.PI * d * d; //[m2]
+            var v = s * LengthPerOne * 1e-3; //[m3]
+            return v * tlr; //[kg]
+        }
+        private string GetGroupElevation(Rebar rebar)
+        {
+            var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.GroupElevation.ToString());
+            return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.GroupElevation.ToString()).AsValueString() : string.Empty;
+        }
+        private string GetPrefix(Rebar rebar)
+        {
+            var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.Prefix.ToString());
+            return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.Prefix.ToString()).AsValueString() : string.Empty;
+        }
+        private string GetZone(Rebar rebar)
+        {
+            var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.Zone.ToString());
+            return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.Zone.ToString()).AsValueString() : string.Empty;
+        }
+
+        public static List<List<NumberingRevitRebar>> NumberingRebars(List<Rebar> rebarsBase, List<OptionNumberingTypeRebar> optionNumberingTypeRebars, SchemaInfo schemaRebarNumberingInfo)
+        {
+            var rebarsBaseGr = rebarsBase
+                .GroupBy(x => x.LookupParameter(OptionNumberingTypeRebar.Prefix.ToString()))
+                .Select(x => x.ToList())
+                .ToList();
+            var results = new List<List<NumberingRevitRebar>>();
+            foreach (var rebarsPrefixGr in rebarsBaseGr)
             {
-                var optionFirst = optionNumberingTypeRebars.First();
-                switch (optionFirst)
+                var rebarsOptionWrap = new List<List<Rebar>>() { rebarsPrefixGr };
+                try
                 {
-                    case OptionNumberingTypeRebar.Prefix:
-                        rebarsOptionWrap = rebarsBase
-                            .GroupBy(x => x, new CompareRebar(ShareParam_Prefix))
-                            .Select(x => x.ToList())
-                            .ToList();
-                        break;
-                    case OptionNumberingTypeRebar.Length:
-                        rebarsOptionWrap = rebarsBase
-                            .GroupBy(x => x, new CompareRebar(BuiltInParameter.REBAR_ELEM_LENGTH))
-                            .Select(x => x.ToList())
-                            .ToList();
-                        break;
-                    case OptionNumberingTypeRebar.RebarShape:
-                        rebarsOptionWrap = rebarsBase
-                            .GroupBy(x => x, new CompareRebar(BuiltInParameter.REBAR_SHAPE))
-                            .Select(x => x.ToList())
-                            .ToList();
-                        break;
-                    case OptionNumberingTypeRebar.Diameter:
-                        rebarsOptionWrap = rebarsBase
-                            .GroupBy(x => x, new CompareRebar(BuiltInParameter.REBAR_BAR_DIAMETER))
-                            .Select(x => x.ToList())
-                            .ToList();
-                        break;
-                    case OptionNumberingTypeRebar.Zone:
-                        rebarsOptionWrap = rebarsBase
-                            .GroupBy(x => x, new CompareRebar(ShareParam_Zone))
-                            .Select(x => x.ToList())
-                            .ToList();
-                        break;
-                    case OptionNumberingTypeRebar.GroupElevation:
-                        rebarsOptionWrap = rebarsBase
-                            .GroupBy(x => x, new CompareRebar(ShareParam_GroupElevation))
-                            .Select(x => x.ToList())
-                            .ToList();
-                        break;
-                }
-                var c = 0;
-                foreach (var optionNumberingTypeRebar in optionNumberingTypeRebars)
-                {
-                    if (c != 0)
+                    foreach (var optionNumberingTypeRebar in optionNumberingTypeRebars)
                     {
-                        var dm = new List<List<Rebar>>();
+                        var compareRebar = GetCompareRebar(optionNumberingTypeRebar);
+                        var rebarsOptionWrapNumbering = new List<List<Rebar>>();
                         foreach (var rebars in rebarsOptionWrap)
                         {
-                            var rebarsOption = new List<List<Rebar>>();
-                            switch (optionFirst)
-                            {
-                                case OptionNumberingTypeRebar.Prefix:
-                                    rebarsOption = rebars
-                                        .GroupBy(x => x, new CompareRebar(ShareParam_Prefix))
+                            var rebarsOption = rebars
+                                        .GroupBy(x => x, compareRebar)
                                         .Select(x => x.ToList())
                                         .ToList();
-                                    break;
-                                case OptionNumberingTypeRebar.Length:
-                                    rebarsOption = rebars
-                                        .GroupBy(x => x, new CompareRebar(BuiltInParameter.REBAR_ELEM_LENGTH))
-                                        .Select(x => x.ToList())
-                                        .ToList();
-                                    break;
-                                case OptionNumberingTypeRebar.RebarShape:
-                                    rebarsOption = rebars
-                                        .GroupBy(x => x, new CompareRebar(BuiltInParameter.REBAR_SHAPE))
-                                        .Select(x => x.ToList())
-                                        .ToList();
-                                    break;
-                                case OptionNumberingTypeRebar.Diameter:
-                                    rebarsOption = rebars
-                                        .GroupBy(x => x, new CompareRebar(BuiltInParameter.REBAR_BAR_DIAMETER))
-                                        .Select(x => x.ToList())
-                                        .ToList();
-                                    break;
-                                case OptionNumberingTypeRebar.Zone:
-                                    rebarsOption = rebars
-                                        .GroupBy(x => x, new CompareRebar(ShareParam_Zone))
-                                        .Select(x => x.ToList())
-                                        .ToList();
-                                    break;
-                                case OptionNumberingTypeRebar.GroupElevation:
-                                    rebarsOption = rebars
-                                        .GroupBy(x => x, new CompareRebar(ShareParam_GroupElevation))
-                                        .Select(x => x.ToList())
-                                        .ToList();
-                                    break;
-                            }
-                            dm.AddRange(rebarsOption);
+                            rebarsOptionWrapNumbering.AddRange(rebarsOption);
                         }
-                        rebarsOptionWrap = dm;
+                        rebarsOptionWrap = rebarsOptionWrapNumbering;
                     }
-                    c++;
+                }
+                catch (System.Exception)
+                {
+                    rebarsOptionWrap.Add(rebarsBase);
+                }
+                var pos = 1;
+                foreach (var rebars in rebarsOptionWrap)
+                {
+                    try
+                    {
+                        var result = new List<NumberingRevitRebar>();
+                        foreach (var rebar in rebars)
+                        {
+                            var rebarNumbering = new NumberingRevitRebar(rebar);
+                            rebarNumbering.ElementPosition = string.IsNullOrEmpty(rebarNumbering.Prefix)
+                                ? $"{pos}"
+                                : $"{rebarNumbering.Prefix}-{pos}";
+                            result.Add(rebarNumbering);
+                            //write entity info for rebar
+                            schemaRebarNumberingInfo.SchemaField.Value = JsonConvert.SerializeObject(rebarNumbering);
+                            SchemaInfo.Write(schemaRebarNumberingInfo.SchemaBase, rebar, schemaRebarNumberingInfo.SchemaField);
+                        }
+                        results.Add(result);
+                        pos++;
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
             }
-            catch (System.Exception)
+            return results;
+        }
+
+        private static CompareRebar GetCompareRebar(OptionNumberingTypeRebar optionNumberingTypeRebar)
+        {
+            var result = new CompareRebar(OptionNumberingTypeRebar.Prefix.ToString());
+            switch (optionNumberingTypeRebar)
             {
-                rebarsOptionWrap.Add(rebarsBase);
+                case OptionNumberingTypeRebar.Prefix:
+                    result = new CompareRebar(OptionNumberingTypeRebar.Prefix.ToString());
+                    break;
+                case OptionNumberingTypeRebar.Length:
+                    result = new CompareRebar(BuiltInParameter.REBAR_ELEM_LENGTH);
+                    break;
+                case OptionNumberingTypeRebar.RebarShape:
+                    result = new CompareRebar(BuiltInParameter.REBAR_SHAPE);
+                    break;
+                case OptionNumberingTypeRebar.Diameter:
+                    result = new CompareRebar(BuiltInParameter.REBAR_MODEL_BAR_DIAMETER);
+                    break;
+                case OptionNumberingTypeRebar.Zone:
+                    result = new CompareRebar(OptionNumberingTypeRebar.Zone.ToString());
+                    break;
+                case OptionNumberingTypeRebar.GroupElevation:
+                    result = new CompareRebar(OptionNumberingTypeRebar.GroupElevation.ToString());
+                    break;
+                case OptionNumberingTypeRebar.StartThread:
+                    result = new CompareRebar(OptionNumberingTypeRebar.StartThread.ToString());
+                    break;
+                case OptionNumberingTypeRebar.EndThread:
+                    result = new CompareRebar(OptionNumberingTypeRebar.EndThread.ToString());
+                    break;
             }
-            return rebarsOptionWrap;
+            return result;
         }
     }
     public enum OptionNumberingTypeRebar
@@ -123,6 +189,8 @@ namespace Utils.NumberingRevitElements
         Diameter = 4,
         Zone = 5,
         GroupElevation = 6,
+        StartThread = 7,
+        EndThread = 8,
     }
     public class CompareRebar : IEqualityComparer<Rebar>
     {
@@ -146,6 +214,11 @@ namespace Utils.NumberingRevitElements
                 var paraY = _builtInParameter != BuiltInParameter.INVALID
                     ? y.get_Parameter(_builtInParameter)
                     : y.LookupParameter(_builtInParameterName);
+
+                if (paraX == null && paraY == null) return true;
+                if (paraX == null && paraY != null) return false;
+                if (paraX != null && paraY == null) return false;
+
                 var paraType = paraX.StorageType;
                 var result = false;
                 switch (paraType)
@@ -157,7 +230,7 @@ namespace Utils.NumberingRevitElements
                         result = paraX.AsInteger().Equals(paraY.AsInteger());
                         break;
                     case StorageType.Double:
-                        result = paraX.AsDouble().IsAlmostEqual(paraY.AsDouble());
+                        result = paraX.AsDouble().IsAlmostEqual(paraY.AsDouble(), 5.MmToFoot());
                         break;
                     case StorageType.String:
                         result = paraX.AsValueString().IsEqual(paraY.AsValueString());
@@ -176,7 +249,7 @@ namespace Utils.NumberingRevitElements
 
         public int GetHashCode(Rebar obj)
         {
-            return obj.GetHashCode();
+            return 0;
         }
     }
 }
