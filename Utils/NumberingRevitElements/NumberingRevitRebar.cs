@@ -2,6 +2,7 @@
 using HcBimUtils;
 using HcBimUtils.RebarUtils;
 using Newtonsoft.Json;
+using Utils.CompareElement;
 using Utils.Entities;
 using Utils.NumberingRevitElements;
 
@@ -77,7 +78,6 @@ namespace RevitDevelop.Utils.NumberingRevitElements
             var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.Zone.ToString());
             return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.Zone.ToString()).AsValueString() : string.Empty;
         }
-
         public static List<List<NumberingRevitRebar>> Numbering(List<Rebar> rebarsBase, List<OptionNumberingTypeRebar> optionNumberingTypeRebars, SchemaInfo schemaRebarNumberingInfo)
         {
             var rebarsBaseGr = rebarsBase
@@ -136,7 +136,6 @@ namespace RevitDevelop.Utils.NumberingRevitElements
             }
             return results;
         }
-
         private static CompareRebar GetCompareRebar(OptionNumberingTypeRebar optionNumberingTypeRebar)
         {
             var result = new CompareRebar(OptionNumberingTypeRebar.Prefix.ToString());
@@ -180,65 +179,5 @@ namespace RevitDevelop.Utils.NumberingRevitElements
         GroupElevation = 6,
         StartThread = 7,
         EndThread = 8,
-    }
-    public class CompareRebar : IEqualityComparer<Rebar>
-    {
-        private BuiltInParameter _builtInParameter = BuiltInParameter.INVALID;
-        private string _builtInParameterName;
-        public CompareRebar(BuiltInParameter builtInParameter)
-        {
-            _builtInParameter = builtInParameter;
-        }
-        public CompareRebar(string builtInParameterName)
-        {
-            _builtInParameterName = builtInParameterName;
-        }
-        public bool Equals(Rebar x, Rebar y)
-        {
-            try
-            {
-                var paraX = _builtInParameter != BuiltInParameter.INVALID
-                    ? x.get_Parameter(_builtInParameter)
-                    : x.LookupParameter(_builtInParameterName);
-                var paraY = _builtInParameter != BuiltInParameter.INVALID
-                    ? y.get_Parameter(_builtInParameter)
-                    : y.LookupParameter(_builtInParameterName);
-
-                if (paraX == null && paraY == null) return true;
-                if (paraX == null && paraY != null) return false;
-                if (paraX != null && paraY == null) return false;
-
-                var paraType = paraX.StorageType;
-                var result = false;
-                switch (paraType)
-                {
-                    case StorageType.None:
-                        result = false;
-                        break;
-                    case StorageType.Integer:
-                        result = paraX.AsInteger().Equals(paraY.AsInteger());
-                        break;
-                    case StorageType.Double:
-                        result = paraX.AsDouble().IsAlmostEqual(paraY.AsDouble(), 5.MmToFoot());
-                        break;
-                    case StorageType.String:
-                        result = paraX.AsValueString().IsEqual(paraY.AsValueString());
-                        break;
-                    case StorageType.ElementId:
-                        result = paraX.AsElementId().ToString().IsEqual(paraY.AsElementId().ToString());
-                        break;
-                }
-                return result;
-            }
-            catch (System.Exception)
-            {
-                return false;
-            }
-        }
-
-        public int GetHashCode(Rebar obj)
-        {
-            return 0;
-        }
     }
 }
