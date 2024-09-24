@@ -36,7 +36,7 @@ namespace Utils.CompareElement
                 switch (paraType)
                 {
                     case StorageType.None:
-                        result = false;
+                        result = true;
                         break;
                     case StorageType.Integer:
                         result = paraX.AsInteger().Equals(paraY.AsInteger());
@@ -55,7 +55,7 @@ namespace Utils.CompareElement
             }
             catch (System.Exception)
             {
-                return false;
+                return true;
             }
         }
 
