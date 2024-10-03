@@ -1,11 +1,11 @@
 ﻿using Autodesk.Revit.Attributes;
 using HcBimUtils.DocumentUtils;
 using Nice3point.Revit.Toolkit.External;
-using RIMT.InstallRebarSlab.models;
-using RIMT.InstallRebarSlab.viewModels;
+using RevitDevelop.InstallRebarSlab.models;
+using RevitDevelop.InstallRebarSlab.viewModels;
 using Utils.SelectionFilterInRevit;
 
-namespace RIMT.InstallRebarSlab
+namespace RevitDevelop.InstallRebarSlab
 {
     [Transaction(TransactionMode.Manual)]
     public class InstallRebarSlabCmd : ExternalCommand

@@ -2,7 +2,7 @@
 using Utils.canvass;
 using wd = System.Windows;
 
-namespace RIMT.InstallRebarSlab.models
+namespace RevitDevelop.InstallRebarSlab.models
 {
     public class MSlabCoordinateAxis : ObservableObject
     {

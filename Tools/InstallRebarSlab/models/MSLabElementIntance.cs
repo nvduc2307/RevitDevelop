@@ -1,14 +1,20 @@
 ﻿using Autodesk.Revit.DB.Structure;
 using HcBimUtils.DocumentUtils;
+using Newtonsoft.Json;
+using RevitDevelop.SettingRuleRebarStandards.models;
+using RevitDevelop.Utils.NumberingRevitElements;
 using Utils.Assemblies;
 using Utils.canvass;
+using Utils.Entities;
 using Utils.FilterElements;
 using Utils.RebarInRevits.Models;
 
-namespace RIMT.InstallRebarSlab.models
+namespace RevitDevelop.InstallRebarSlab.models
 {
     public class MSLabElementIntance : ObservableObject
     {
+        public const string REBAR_SLAB_SCHEMAL_INFO = "468f6fb2-fde4-4f2e-a8e7-ab787a89b8a3";
+        public const string REBAR_SLAB_SCHEMAL_NAME = "REBAR_SLAB";
         private RebarBarTypeCustom _rebarBarTypeSelected;
         private MSlabRebarLayerUi _mSlabRebarLayerUiSelected;
         public List<ViewFamilyType> ViewFamilyTypes { get; }
@@ -37,6 +43,9 @@ namespace RIMT.InstallRebarSlab.models
             }
         }
         public Action MSlabRebarLayerUiSelectedEventAction { get; set; }
+        public SettingRuleRebarGrade SettingRuleRebarGrade { get; }
+        public SchemaInfo RebarSlabSchemaInfo { get; }
+        public List<OptionNumberingTypeRebar> OptionNumberingTypeRebars { get; }
         public MSLabElementIntance()
         {
             ViewFamilyTypes = AC.Document.GetElementsFromClass<ViewFamilyType>()
@@ -44,13 +53,36 @@ namespace RIMT.InstallRebarSlab.models
                 .ToList();
             Grids = AC.Document.GetElementsFromClass<Grid>(false);
             AssemblyRebars = AC.Document.GetElementsFromClass<AssemblyInstance>(false)
-                .Where(x => AssemblyInfo.GetAssemblyType(AC.Document, x) == Utils.Assemblies.AssemblyType.Rebar)
+                .Where(x => AssemblyInfo.GetAssemblyType(AC.Document, x) == AssemblyType1.Rebar)
                 .ToList();
             AssemblyRebarFloors = GetAssemblyRebarFloors();
-            RebarBarTypes = AC.Document.GetElementsFromClass<RebarBarType>().Select(x => new RebarBarTypeCustom(x)).ToList();
+            RebarBarTypes = AC.Document.GetElementsFromClass<RebarBarType>()
+                .Select(x => new RebarBarTypeCustom(x))
+                .OrderBy(x => x.NameStyle)
+                .ToList();
             RebarBarTypeSelected = RebarBarTypes.FirstOrDefault();
             MSlabRebarLayerUis = MSlabRebarLayerUi.GetMSlabRebarLayerUi();
             MSlabRebarLayerUiSelected = MSlabRebarLayerUis.FirstOrDefault();
+
+            var schemaRebarNumberingInfo = new SchemaInfo(
+                    ElementInstance.SCHEMAL_INFO_RULE_DEVELOP_LAP,
+                    ElementInstance.REBAR_RULE_DEVELOP_LAP,
+                    new SchemaField());
+
+            var rebarInfos = SchemaInfo.Read(schemaRebarNumberingInfo.SchemaBase, AC.Document.ProjectInformation, schemaRebarNumberingInfo.SchemaField.Name);
+            SettingRuleRebarGrade = JsonConvert.DeserializeObject<SettingRuleRebarGrade>(rebarInfos);
+
+            RebarSlabSchemaInfo = new SchemaInfo(REBAR_SLAB_SCHEMAL_INFO, REBAR_SLAB_SCHEMAL_NAME, new SchemaField());
+
+            OptionNumberingTypeRebars = new List<OptionNumberingTypeRebar>()
+            {
+                OptionNumberingTypeRebar.Prefix,
+                OptionNumberingTypeRebar.Length,
+                OptionNumberingTypeRebar.Diameter,
+                OptionNumberingTypeRebar.RebarShape,
+                OptionNumberingTypeRebar.StartThread,
+                OptionNumberingTypeRebar.EndThread,
+            };
         }
         private List<AssemblyInfo> GetAssemblyRebarFloors()
         {
@@ -62,7 +94,6 @@ namespace RIMT.InstallRebarSlab.models
                 .Select(x => new AssemblyInfo(AC.UiDoc, x))
                 .ToList();
         }
-
         public static void MSlabRebarLayerUiSelectedEventActionF(List<MSlab> mSlabs, MSlabRebarLayerType mSlabRebarLayerType, CanvasPageBase canvasPageBase, XYZ rCenter, InstallRebarSlabModel installRebarSlabModel)
         {
             foreach (var mSl in mSlabs)

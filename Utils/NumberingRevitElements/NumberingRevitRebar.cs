@@ -1,44 +1,57 @@
 ﻿using Autodesk.Revit.DB.Structure;
 using HcBimUtils;
+using HcBimUtils.DocumentUtils;
 using HcBimUtils.RebarUtils;
 using Newtonsoft.Json;
 using Utils.CompareElement;
 using Utils.Entities;
 using Utils.NumberingRevitElements;
+using Utils.RebarInRevits.Utils;
+using Utils.Units;
 
 namespace RevitDevelop.Utils.NumberingRevitElements
 {
     public class NumberingRevitRebar : NumberingRevitElement
     {
+        public int RebarLayer { get; set; }
         public string GroupElevation { get; set; }
         public double Diameter { get; set; } //[mm]
         public double LengthPerOne { get; set; }// [mm]
+        public double LengthOrder { get; set; }// [mm]
         public double TotalLength { get; set; }// [mm]
         public double WeightPerOne { get; set; }// [kg]
         public double TotalWeight { get; set; }// [kg]
-        public long Quantity { get; set; }
+        public int Quantity { get; set; }
         public bool StartThread { get; set; } // Ren
         public bool EndThread { get; set; } // Ren
-        public long CouplerCount { get; set; }
+        public int CouplerCount { get; set; }
+        public string Image { get; set; }
+        public int Unit { get; set; }
         public NumberingRevitRebar(Rebar rebar)
         {
-            ElementId = long.Parse(rebar.Id.ToString());
+            ElementId = int.Parse(rebar.Id.ToString());
+#if R21
+            Diameter = rebar.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble().FootToMm();
+#else
             Diameter = rebar.get_Parameter(BuiltInParameter.REBAR_MODEL_BAR_DIAMETER).AsDouble().FootToMm();
+#endif
             Name = rebar.GetRebarBarType().Name;
             GroupElevation = GetGroupElevation(rebar);
             Prefix = GetPrefix(rebar);
             Zone = GetZone(rebar);
             Quantity = rebar.get_Parameter(BuiltInParameter.REBAR_ELEM_QUANTITY_OF_BARS).AsInteger();
             LengthPerOne = Math.Round(rebar.get_Parameter(BuiltInParameter.REBAR_ELEM_LENGTH).AsDouble().FootToMm(), 0);
+            LengthOrder = RebarLengthUtils.OptimizeRebarLength(LengthPerOne);
             TotalLength = LengthPerOne * Quantity;
             WeightPerOne = GetWeightPerOne();
             TotalWeight = WeightPerOne * Quantity;
             StartThread = GetStartThread(rebar);
             EndThread = GetEndThread(rebar);
             CouplerCount = GetCouplerCount();
+            Unit = (int)UnitEnum.cm;
         }
         public NumberingRevitRebar() { }
-        private long GetCouplerCount()
+        private int GetCouplerCount()
         {
             var result = 0;
             if (StartThread) result++;
@@ -65,8 +78,8 @@ namespace RevitDevelop.Utils.NumberingRevitElements
         }
         private string GetGroupElevation(Rebar rebar)
         {
-            var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.GroupElevation.ToString());
-            return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.GroupElevation.ToString()).AsValueString() : string.Empty;
+            var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.SCHEDULE_REBAR_GROUP_LEVEL.ToString());
+            return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.SCHEDULE_REBAR_GROUP_LEVEL.ToString()).AsValueString() : string.Empty;
         }
         private string GetPrefix(Rebar rebar)
         {
@@ -75,11 +88,14 @@ namespace RevitDevelop.Utils.NumberingRevitElements
         }
         private string GetZone(Rebar rebar)
         {
-            var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.Zone.ToString());
-            return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.Zone.ToString()).AsValueString() : string.Empty;
+            var hasParam = ElementUtils.HasParameter(rebar, OptionNumberingTypeRebar.SCHEDULE_REBAR_ZONE.ToString());
+            return hasParam ? rebar.LookupParameter(OptionNumberingTypeRebar.SCHEDULE_REBAR_ZONE.ToString()).AsValueString() : string.Empty;
         }
-        public static List<List<NumberingRevitRebar>> Numbering(List<Rebar> rebarsBase, List<OptionNumberingTypeRebar> optionNumberingTypeRebars, SchemaInfo schemaRebarNumberingInfo)
+        public static void Numbering(List<NumberingRevitRebar> numberingRevitRebars, List<OptionNumberingTypeRebar> optionNumberingTypeRebars, SchemaInfo schemaRebarNumberingInfo)
         {
+            var rebarsBase = numberingRevitRebars
+                .Select(x => (new ElementId(int.Parse(x.ElementId.ToString()))).ToElement(AC.Document) as Rebar)
+                .ToList();
             var rebarsBaseGr = rebarsBase
                 .GroupBy(x => x.LookupParameter(OptionNumberingTypeRebar.Prefix.ToString()))
                 .Select(x => x.ToList())
@@ -134,9 +150,10 @@ namespace RevitDevelop.Utils.NumberingRevitElements
                     }
                 }
             }
-            return results;
+            numberingRevitRebars = results.Count == 0 ? numberingRevitRebars : results.Aggregate((a, b) => a.Concat(b).ToList());
         }
-        private static CompareRebar GetCompareRebar(OptionNumberingTypeRebar optionNumberingTypeRebar)
+
+        public static CompareRebar GetCompareRebar(OptionNumberingTypeRebar optionNumberingTypeRebar)
         {
             var result = new CompareRebar(OptionNumberingTypeRebar.Prefix.ToString());
             switch (optionNumberingTypeRebar)
@@ -151,19 +168,29 @@ namespace RevitDevelop.Utils.NumberingRevitElements
                     result = new CompareRebar(BuiltInParameter.REBAR_SHAPE);
                     break;
                 case OptionNumberingTypeRebar.Diameter:
+#if R21
+                    result = new CompareRebar(BuiltInParameter.REBAR_BAR_DIAMETER);
+#else
                     result = new CompareRebar(BuiltInParameter.REBAR_MODEL_BAR_DIAMETER);
+#endif
                     break;
-                case OptionNumberingTypeRebar.Zone:
-                    result = new CompareRebar(OptionNumberingTypeRebar.Zone.ToString());
+                case OptionNumberingTypeRebar.SCHEDULE_REBAR_ZONE:
+                    result = new CompareRebar(OptionNumberingTypeRebar.SCHEDULE_REBAR_ZONE.ToString());
                     break;
-                case OptionNumberingTypeRebar.GroupElevation:
-                    result = new CompareRebar(OptionNumberingTypeRebar.GroupElevation.ToString());
+                case OptionNumberingTypeRebar.SCHEDULE_REBAR_GROUP_LEVEL:
+                    result = new CompareRebar(OptionNumberingTypeRebar.SCHEDULE_REBAR_GROUP_LEVEL.ToString());
                     break;
                 case OptionNumberingTypeRebar.StartThread:
                     result = new CompareRebar(OptionNumberingTypeRebar.StartThread.ToString());
                     break;
                 case OptionNumberingTypeRebar.EndThread:
                     result = new CompareRebar(OptionNumberingTypeRebar.EndThread.ToString());
+                    break;
+                case OptionNumberingTypeRebar.Comments:
+                    result = new CompareRebar(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS);
+                    break;
+                case OptionNumberingTypeRebar.工区:
+                    result = new CompareRebar("工区");
                     break;
             }
             return result;
@@ -175,9 +202,14 @@ namespace RevitDevelop.Utils.NumberingRevitElements
         Length = 2,
         RebarShape = 3,
         Diameter = 4,
-        Zone = 5,
-        GroupElevation = 6,
+        SCHEDULE_REBAR_ZONE = 5,
+        SCHEDULE_REBAR_GROUP_LEVEL = 6,
         StartThread = 7,
         EndThread = 8,
+        Comments = 9,
+        工区 = 10,//zone,
+        GroupElevation = 11,
+        Group = 11,
+        Zone = 12,
     }
 }

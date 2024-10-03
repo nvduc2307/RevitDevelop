@@ -1,6 +1,4 @@
-﻿using Autodesk.Revit.DB;
-
-namespace RIMT.InstallRebarSlab.models
+﻿namespace RevitDevelop.InstallRebarSlab.models
 {
     public class MSlabGrid
     {

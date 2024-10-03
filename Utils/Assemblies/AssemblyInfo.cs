@@ -14,7 +14,7 @@ namespace Utils.Assemblies
         private UIDocument _uiDocument;
         private Document _document;
         public AssemblyInstance AssemblyInstance { get; private set; }
-        public AssemblyType AssemblyType { get; private set; }
+        public AssemblyType1 AssemblyType { get; private set; }
         public Outline AssemblyOutline { get; private set; }
         public Line AssemblyCurveBoundingBox { get; private set; }
         public string AssemblyZone { get; set; }
@@ -55,7 +55,7 @@ namespace Utils.Assemblies
                 return curveIntersetCount > 0;
             }).ToList();
 
-            if (AssemblyType == AssemblyType.Rebar)
+            if (AssemblyType == AssemblyType1.Rebar)
             {
                 if (!string.IsNullOrEmpty(AssemblyZone))
                 {
@@ -98,7 +98,7 @@ namespace Utils.Assemblies
         }
         public void SetAssemblyZoneForRebarInAssembly()
         {
-            if (AssemblyType == AssemblyType.Rebar)
+            if (AssemblyType == AssemblyType1.Rebar)
             {
                 if (!string.IsNullOrEmpty(AssemblyZone))
                 {
@@ -129,17 +129,17 @@ namespace Utils.Assemblies
                 var points = new List<XYZ>();
                 switch (AssemblyType)
                 {
-                    case AssemblyType.InValid:
+                    case AssemblyType1.InValid:
                         break;
-                    case AssemblyType.Rebar:
+                    case AssemblyType1.Rebar:
                         var rebars = GetElementInAssembly<Rebar>(_document, AssemblyInstance, BuiltInCategory.OST_Rebar);
                         points = GetPoint(rebars).ToList();
                         break;
-                    case AssemblyType.Beam:
+                    case AssemblyType1.Beam:
                         var beams = GetElementInAssembly<FamilyInstance>(_document, AssemblyInstance, BuiltInCategory.OST_StructuralFraming);
                         points = GetPoint(beams).ToList();
                         break;
-                    case AssemblyType.Column:
+                    case AssemblyType1.Column:
                         var columns = GetElementInAssembly<FamilyInstance>(_document, AssemblyInstance, BuiltInCategory.OST_StructuralColumns);
                         points = GetPoint(columns).ToList();
                         break;
@@ -219,12 +219,12 @@ namespace Utils.Assemblies
         {
             return document.GetElementsFromClass<AssemblyInstance>(false);
         }
-        public static AssemblyType GetAssemblyType(Document document, AssemblyInstance assemblyInstance)
+        public static AssemblyType1 GetAssemblyType(Document document, AssemblyInstance assemblyInstance)
         {
-            var result = AssemblyType.InValid;
+            var result = AssemblyType1.InValid;
             try
             {
-                if (assemblyInstance == null) return AssemblyType.InValid;
+                if (assemblyInstance == null) return AssemblyType1.InValid;
                 var members = assemblyInstance.GetMemberIds().Select(x => document.GetElement(x));
 
                 var isRebar = members.Any(x => x.Category.ToBuiltinCategory() == BuiltInCategory.OST_Rebar);
@@ -239,15 +239,15 @@ namespace Utils.Assemblies
                 var isFloor = members.Any(x => x.Category.ToBuiltinCategory() == BuiltInCategory.OST_Floors);
                 var isNotFloor = members.Any(x => x.Category.ToBuiltinCategory() != BuiltInCategory.OST_Floors);
 
-                if (isRebar == true && isNotRebar == false) result = AssemblyType.Rebar;
-                if (isBeam == true && isNotBeam == false) result = AssemblyType.Beam;
-                if (isRebar == true && isNotColumn == false) result = AssemblyType.Column;
+                if (isRebar == true && isNotRebar == false) result = AssemblyType1.Rebar;
+                if (isBeam == true && isNotBeam == false) result = AssemblyType1.Beam;
+                if (isRebar == true && isNotColumn == false) result = AssemblyType1.Column;
 
                 return result;
             }
             catch (Exception)
             {
-                return AssemblyType.InValid;
+                return AssemblyType1.InValid;
             }
         }
         public static IEnumerable<AssemblyInstance> GetAssemblyInstanceFormCategory(Document document, BuiltInCategory builtInCategory)
@@ -306,7 +306,7 @@ namespace Utils.Assemblies
                 try
                 {
                     var assType = GetAssemblyType(document, rebarAssemblyInstance);
-                    if (assType == AssemblyType.Rebar)
+                    if (assType == AssemblyType1.Rebar)
                     {
                         var rebars = GetElementInAssembly<Rebar>(document, rebarAssemblyInstance, BuiltInCategory.OST_Rebar);
                         var isRebarWithHostCategory = rebars.Any(x => x.get_Parameter(BuiltInParameter.REBAR_HOST_CATEGORY).AsInteger() == rebarHostCategory.ToIntergerValue());
@@ -329,7 +329,7 @@ namespace Utils.Assemblies
             return results;
         }
     }
-    public enum AssemblyType
+    public enum AssemblyType1
     {
         InValid,
         Rebar,

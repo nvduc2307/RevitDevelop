@@ -12,14 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace RevitDevelop.Tools.InstallRebarSlab.views
+namespace RevitDevelop.Tools.SettingRuleRebarStandards.views
 {
     /// <summary>
-    /// Interaction logic for InstallRebarSlabView.xaml
+    /// Interaction logic for SettingLapLengthAndDevelopRebarRuleModifyView.xaml
     /// </summary>
-    public partial class InstallRebarSlabView : Window
+    public partial class SettingLapLengthAndDevelopRebarRuleModifyView : Window
     {
-        public InstallRebarSlabView()
+        public SettingLapLengthAndDevelopRebarRuleModifyView()
         {
             InitializeComponent();
         }

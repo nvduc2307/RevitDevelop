@@ -1,4 +1,7 @@
 ﻿using HcBimUtils;
+using Utils.CompareElement;
+using Utils.RevArcs;
+using Utils.RevEllipses;
 
 namespace Utils.Curveloops
 {
@@ -75,6 +78,46 @@ namespace Utils.Curveloops
             {
                 return loop;
             }
+        }
+
+        public static List<XYZ> GetPoints(this CurveLoop curves)
+        {
+            List<XYZ> list = new List<XYZ>();
+            foreach (Curve curf in curves)
+            {
+                if (curf is Line l) list.Add(l.SP());
+                if (curf is Arc arc) list.AddRange(arc.Tessellate());
+                if (curf is Ellipse el) list.AddRange(el.Tessellate());
+            }
+
+            return list.Distinct(new ComparePoint()).ToList();
+        }
+        public static CurveLoop GenerateCurveLoop(this CurveLoop curveLoop)
+        {
+            var result = new CurveLoop();
+            foreach (var curve in curveLoop)
+            {
+                if (curve is Line l) result.Append(l);
+                if (curve is Arc arc)
+                {
+                    var arcCustom = new ArcCustom(arc);
+                    var arcLines = arcCustom.Curves;
+                    foreach (Line arcL in arcLines)
+                    {
+                        result.Append(arcL);
+                    }
+                }
+                if (curve is Ellipse el)
+                {
+                    var elCustom = new EllipseCustom(el);
+                    var elLines = elCustom.Curves;
+                    foreach (Line ElL in elLines)
+                    {
+                        result.Append(ElL);
+                    }
+                }
+            }
+            return result;
         }
     }
 }

@@ -10,7 +10,7 @@ using Utils.Curveloops;
 using Utils.Geometries;
 using Utils.Solids;
 
-namespace RIMT.InstallRebarSlab.models
+namespace RevitDevelop.InstallRebarSlab.models
 {
     public class MSlab
     {
@@ -33,7 +33,7 @@ namespace RIMT.InstallRebarSlab.models
         public List<Element> ElementsAround { get; set; }
         public List<XYZ> PointsAround { get; set; }
         public List<XYZ> PointsSlabOnFloorPlan { get; set; }
-        public List<MSlabOpening> PointsSlabOpeningOnFloorPlan { get; set; }
+        public List<MSlabOpening> MSlabOpenings { get; set; }
         public List<Grid> GridsAround { get; set; }
         public MSLabElementIntance MSLabElementIntance { get; set; }
         public List<AssemblyInfo> AssemblyRebarFloors { get; set; }
@@ -69,9 +69,10 @@ namespace RIMT.InstallRebarSlab.models
             ElementsAround = GetElementsAround();
             PointsAround = GetPointsAround();
             GridsAround = GetGridsAround();
+            AssemblyRebarFloors = GetAssemblyRebarFloor();
             FaceSections = GetFaceSections();
             PointsSlabOnFloorPlan = GetPointsSlabOnFloorPlan(out List<MSlabOpening> openings);
-            PointsSlabOpeningOnFloorPlan = openings;
+            MSlabOpenings = openings;
             MSlabRebar = GetMSlabRebar();
             //LineRayTopX = GetLineRayTop(FloorCurves, Center, VTY, VTX, out Line lineRayBotX);
             //LineRayBotX = lineRayBotX;
@@ -116,7 +117,14 @@ namespace RIMT.InstallRebarSlab.models
             var results = new List<CurveLoop>();
             try
             {
-                var sket = AC.Document.GetElement(Floor.SketchId) as Sketch;
+                Sketch sket = null;
+#if R21
+                var elementFilter = new ElementClassFilter(typeof(Sketch), false);
+                var skets = Floor.GetDependentElements(elementFilter).Select(x => AC.Document.GetElement(x) as Sketch);
+                sket = AC.Document.GetElement(skets.FirstOrDefault().Id) as Sketch;
+#else  
+                sket = AC.Document.GetElement(Floor.SketchId) as Sketch;
+#endif
                 var profile = sket.Profile;
                 foreach (CurveArray curveArray in profile)
                 {
@@ -157,16 +165,16 @@ namespace RIMT.InstallRebarSlab.models
                 topX.CoverLayer = CoverMm + topY.RebarBarTypeCustom.BarDiameter.FootToMm() + topX.RebarBarTypeCustom.BarDiameter.FootToMm() / 2;
                 topY.CoverLayer = CoverMm + topY.RebarBarTypeCustom.BarDiameter.FootToMm() / 2;
 
-                topY.MSlabRebars = MSlabRebarLayer.GetMSlabRebars(topY);
-                topX.MSlabRebars = MSlabRebarLayer.GetMSlabRebars(topX);
+                MSlabRebarLayer.UpdateLayerMSlabRebars(topY);
+                MSlabRebarLayer.UpdateLayerMSlabRebars(topX);
             };
             topY.RebarBarTypeCustomEventAction = () =>
             {
                 topY.CoverLayer = CoverMm + topY.RebarBarTypeCustom.BarDiameter.FootToMm() / 2;
                 topX.CoverLayer = CoverMm + topY.RebarBarTypeCustom.BarDiameter.FootToMm() + topX.RebarBarTypeCustom.BarDiameter.FootToMm() / 2;
 
-                topY.MSlabRebars = MSlabRebarLayer.GetMSlabRebars(topY);
-                topX.MSlabRebars = MSlabRebarLayer.GetMSlabRebars(topX);
+                MSlabRebarLayer.UpdateLayerMSlabRebars(topY);
+                MSlabRebarLayer.UpdateLayerMSlabRebars(topX);
             };
 
             botX.RebarBarTypeCustomEventAction = () =>
@@ -174,16 +182,16 @@ namespace RIMT.InstallRebarSlab.models
                 botY.CoverLayer = CoverMm + botY.RebarBarTypeCustom.BarDiameter.FootToMm() / 2;
                 botX.CoverLayer = CoverMm + botY.RebarBarTypeCustom.BarDiameter.FootToMm() + botX.RebarBarTypeCustom.BarDiameter.FootToMm() / 2;
 
-                botY.MSlabRebars = MSlabRebarLayer.GetMSlabRebars(botY);
-                botX.MSlabRebars = MSlabRebarLayer.GetMSlabRebars(botX);
+                MSlabRebarLayer.UpdateLayerMSlabRebars(botY);
+                MSlabRebarLayer.UpdateLayerMSlabRebars(botX);
             };
             botY.RebarBarTypeCustomEventAction = () =>
             {
                 botY.CoverLayer = CoverMm + botY.RebarBarTypeCustom.BarDiameter.FootToMm() / 2;
                 botX.CoverLayer = CoverMm + botY.RebarBarTypeCustom.BarDiameter.FootToMm() + botX.RebarBarTypeCustom.BarDiameter.FootToMm() / 2;
 
-                botY.MSlabRebars = MSlabRebarLayer.GetMSlabRebars(botY);
-                botX.MSlabRebars = MSlabRebarLayer.GetMSlabRebars(botX);
+                MSlabRebarLayer.UpdateLayerMSlabRebars(botY);
+                MSlabRebarLayer.UpdateLayerMSlabRebars(botX);
             };
 
             return new MSlabRebar(this, VTX, VTY, VTZ, topX, topY, botX, botY);
@@ -194,10 +202,10 @@ namespace RIMT.InstallRebarSlab.models
             var result = new List<XYZ>();
             try
             {
-                result = Profiles.LastOrDefault().GetPoints();
+                result = CurveloopExt.GetPoints(Profiles.LastOrDefault());
                 openings = Profiles.Count == 1
-                    ? new List<MSlabOpening>()
-                    : Profiles.Slice(0, Profiles.Count - 1).Select(x => new MSlabOpening(Floor, x.GetPoints())).ToList();
+                ? new List<MSlabOpening>()
+                : Profiles.Slice(0, Profiles.Count - 1).Select(x => new MSlabOpening(Floor, x)).ToList();
             }
             catch (Exception)
             {
@@ -316,10 +324,42 @@ namespace RIMT.InstallRebarSlab.models
                 .Aggregate((a, b) => a.Concat(b).ToList())
                 .Select(x => x.GetEdgesAsCurveLoops())
                 .Aggregate((a, b) => a.Concat(b).ToList())
-                .Select(x => x.GetPoints())
+                .Select(x => CurveloopExt.GetPoints(x))
                 .Aggregate((a, b) => a.Concat(b).ToList())
                 .Select(x => x.EditZ(FloorMinZ))
                 .ToList();
+            }
+            catch (Exception)
+            {
+            }
+            return result;
+        }
+        private List<AssemblyInfo> GetAssemblyRebarFloor()
+        {
+            var result = new List<AssemblyInfo>();
+            try
+            {
+                var minz = FloorMinZ - 1000.MmToFoot();
+                var maxz = FloorMaxZ + 1000.MmToFoot();
+                var plg = CurveloopExt.GetPoints(OutlineReal)
+                    .Select(x => x.EditZ(minz))
+                    .ToList();
+                var solid = plg.CreateSolid(XYZ.BasisZ, (maxz - minz).FootToMm());
+
+                result = MSLabElementIntance.AssemblyRebarFloors
+                    .Where(x =>
+                    {
+                        var l = x.AssemblyCurveBoundingBox;
+                        var intersect = solid.IntersectWithCurve(l, new SolidCurveIntersectionOptions());
+                        if (intersect.SegmentCount == 0) return false;
+                        var length = 0.0;
+                        for (int i = 0; i < intersect.SegmentCount; i++)
+                        {
+                            length += intersect.GetCurveSegment(i).Length;
+                        }
+                        return length * 100 / l.Length >= 50;
+                    })
+                    .ToList();
             }
             catch (Exception)
             {
@@ -336,8 +376,7 @@ namespace RIMT.InstallRebarSlab.models
                 var outlineRealOffset = isClockwise
                     ? OutlineReal.CreateOffset(2000.MmToFoot(), XYZ.BasisZ)
                     : OutlineReal.CreateOffset(2000.MmToFoot(), -XYZ.BasisZ);
-                var ps = outlineRealOffset
-                    .GetPoints()
+                var ps = CurveloopExt.GetPoints(outlineRealOffset)
                     .Select(x => x.EditZ(FloorMinZ))
                     .ToList();
                 var solid = ps.CreateSolid(XYZ.BasisZ, solidThickness);
@@ -361,16 +400,16 @@ namespace RIMT.InstallRebarSlab.models
         }
         private List<Element> GetElementsAround()
         {
+            var maxDev = 2000.MmToFoot();
             var results = new List<Element>();
             try
             {
                 //offset curveloop
                 var isClockwise = OutlineReal.IsCounterclockwise(XYZ.BasisZ);
                 var outlineRealOffset = isClockwise
-                    ? OutlineReal.CreateOffset(100.MmToFoot(), XYZ.BasisZ)
-                    : OutlineReal.CreateOffset(100.MmToFoot(), -XYZ.BasisZ);
-                var ps = outlineRealOffset
-                    .GetPoints()
+                    ? OutlineReal.CreateOffset(maxDev, XYZ.BasisZ)
+                    : OutlineReal.CreateOffset(maxDev, -XYZ.BasisZ);
+                var ps = CurveloopExt.GetPoints(outlineRealOffset)
                     .Select(x => x.EditZ(FloorMinZ))
                     .ToList();
                 var solid = ps.CreateSolid(XYZ.BasisZ, 50.MmToFoot());
@@ -500,10 +539,24 @@ namespace RIMT.InstallRebarSlab.models
     {
         public Floor Floor { get; }
         public List<XYZ> Points { get; }
+        public CurveLoop CurveLoop { get; }
+        public XYZ Normal { get; }
+        public System.Windows.Shapes.Polygon OpeningsInCanvas { get; set; }
         public MSlabOpening(Floor floor, List<XYZ> points)
         {
             Floor = floor;
             Points = points;
+        }
+        public MSlabOpening(Floor floor, CurveLoop curveLoop)
+        {
+            Floor = floor;
+            CurveLoop = curveLoop;
+            Normal = curveLoop.GetNormal();
+            Points = CurveloopExt.GetPoints(curveLoop);
+        }
+        public void DrawInCanvas()
+        {
+
         }
     }
 }

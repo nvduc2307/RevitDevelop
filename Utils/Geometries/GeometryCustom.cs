@@ -1,4 +1,8 @@
-﻿namespace Utils.Geometries
+﻿using HcBimUtils;
+using Utils.RevArcs;
+using Utils.RevEllipses;
+
+namespace Utils.Geometries
 {
     public static class GeometryCustom
     {
@@ -104,6 +108,68 @@
             return result;
         }
 
+        public static XYZ LineIntersectFace(this Line line, FaceCustom faceCad)
+        {
+            XYZ result = null;
+            try
+            {
+                var p1 = line.GetEndPoint(0);
+                var p2 = line.GetEndPoint(1);
+                var p = line.Midpoint().RayPointToFace(line.Direction, faceCad);
+                var vt1 = p1 - p;
+                var vt2 = p2 - p;
+                if (vt1.DotProduct(vt2) < 0) result = p;
+            }
+            catch (Exception)
+            {
+            }
+            return result;
+        }
+
+        public static List<XYZ> ArcIntersectFace(this ArcCustom arc, FaceCustom faceCustom)
+        {
+            var reuslts = new List<XYZ>();
+            foreach (Line curve in arc.Curves)
+            {
+                var p = curve.LineIntersectFace(faceCustom);
+                if (p != null) reuslts.Add(p);
+            }
+            return reuslts;
+        }
+
+        public static List<XYZ> CurveIntersectFace(this Curve curve, FaceCustom faceCad)
+        {
+            var result = new List<XYZ>();
+            if (curve is Line line)
+            {
+                result.Add(line.LineIntersectFace(faceCad));
+            }
+            if (curve is Arc arc)
+            {
+                var arcCustom = new ArcCustom(arc);
+                var ps = arcCustom.ArcIntersectFace(faceCad);
+                if (ps.Count > 0) result.AddRange(ps);
+            }
+            if (curve is Ellipse ellipse)
+            {
+                var ellipseCustom = new EllipseCustom(ellipse);
+                var ps = ellipseCustom.EllipesIntersectFace(faceCad);
+                if (ps.Count > 0) result.AddRange(ps);
+            }
+            return result;
+        }
+
+        public static List<XYZ> EllipesIntersectFace(this EllipseCustom ellipseCustom, FaceCustom faceCustom)
+        {
+            var reuslts = new List<XYZ>();
+            foreach (Line curve in ellipseCustom.Curves)
+            {
+                var p = curve.LineIntersectFace(faceCustom);
+                if (p != null) reuslts.Add(p);
+            }
+            return reuslts;
+        }
+
         public static double AngleTo(this XYZ vt1, XYZ vt2)
         {
             var result = 0.0;
@@ -167,31 +233,24 @@
             return new XYZ(pc.X * 2 - p.X, pc.Y * 2 - p.Y, pc.Z * 2 - p.Z);
         }
 
+        public static ModelCurve CreateModelLine(this Document doc, Line l, XYZ normal)
+        {
+            ModelCurve ml = null;
+            try
+            {
+                var pl = Plane.CreateByNormalAndOrigin(normal, l.Midpoint());
+                var sk = SketchPlane.Create(doc, pl);
+                ml = doc.Create.NewModelCurve(l, sk);
+            }
+            catch (Exception)
+            {
+            }
+            return ml;
+        }
+
         public static bool IsSeem(this XYZ p1, XYZ p2)
         {
             return p1.X.IsAlmostEqual(p2.X) && p1.Y.IsAlmostEqual(p2.Y) && p1.Z.IsAlmostEqual(p2.Z);
-        }
-
-        public static bool IsCounterClockWise(this List<XYZ> polygons)
-        {
-            bool r = false;
-            double sum = 0;
-            for (int i = 0; i < polygons.Count - 1; i++)
-            {
-                var x1 = polygons[i].X;
-                var x2 = polygons[i + 1].X;
-                var y1 = polygons[i].Y;
-                var y2 = polygons[i + 1].Y;
-                sum += (x2 - x1) * (y2 + y1);
-            }
-            var sp = polygons[0];
-            var ep = polygons[polygons.Count - 1];
-            sum += (sp.X - ep.X) * (sp.Y + ep.Y);
-            if (sum < 0)
-            {
-                r = true;
-            }
-            return r;
         }
     }
 }

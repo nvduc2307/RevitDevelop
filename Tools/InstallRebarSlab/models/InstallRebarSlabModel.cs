@@ -1,7 +1,7 @@
 ﻿using HcBimUtils;
 using Utils.CompareElement;
 
-namespace RIMT.InstallRebarSlab.models
+namespace RevitDevelop.InstallRebarSlab.models
 {
     public class InstallRebarSlabModel : ObservableObject
     {
@@ -36,7 +36,9 @@ namespace RIMT.InstallRebarSlab.models
             MSlabElementNeighborhoods = MSlabs
                 .Select(x => x.ElementsAround)
                 .Aggregate((a, b) => a.Concat(b).ToList())
+                .Where(x => !MSlabs.Any(y => y.Floor.Id.ToString().Equals(x.Id)))
                 .Select(x => new MSlabElementNeighborhood(x))
+                .Where(x => x.AllCurveLoops != null)
                 .ToList();
             MSlabBox = GetMSlabBox();
             MSlabCenter = MSlabBox.Min.Midpoint(MSlabBox.Max);
@@ -49,8 +51,9 @@ namespace RIMT.InstallRebarSlab.models
             {
                 var points1 = MSlabs.Select(x => x.PointsSlabOnFloorPlan)
                     .Aggregate((a, b) => a.Concat(b).ToList());
-                var points2 = MSlabElementNeighborhoods.Select(x => x.PointsOnFloorPlan)
-                    .Aggregate((a, b) => a.Concat(b).ToList());
+                var points2 = MSlabElementNeighborhoods.Count > 0 ? MSlabElementNeighborhoods.Select(x => x.PointsOnFloorPlan)
+                    .Aggregate((a, b) => a.Concat(b).ToList())
+                    : new List<XYZ>();
                 var points = points1.Concat(points2).ToList();
 
                 var minx = points.Min(x => x.X);

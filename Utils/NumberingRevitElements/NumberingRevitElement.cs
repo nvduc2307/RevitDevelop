@@ -2,7 +2,9 @@
 {
     public abstract class NumberingRevitElement
     {
-        public long ElementId { get; set; }
+        public int ElementId { get; set; }
+        public int HostId { get; set; }
+        public string HostName { get; set; }
         public string Name { get; set; }
         public string Prefix { get; set; }
         public string Zone { get; set; }

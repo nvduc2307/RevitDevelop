@@ -42,6 +42,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Tools\SettingRuleRebarStandards\datas\SettingRuleRebarStandardsData.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Tools\SettingRuleRebarStandards\datas\SettingRuleRebarStandardsData.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="HcBimUtils" Version="2024.0.11" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

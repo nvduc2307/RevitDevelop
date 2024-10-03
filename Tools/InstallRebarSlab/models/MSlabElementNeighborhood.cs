@@ -1,8 +1,10 @@
 ﻿using HcBimUtils;
 using HcBimUtils.GeometryUtils.Geometry;
+using HcBimUtils.MoreLinq;
+using RevitDevelop.Utils.Floors;
 using Utils.CompareElement;
 
-namespace RIMT.InstallRebarSlab.models
+namespace RevitDevelop.InstallRebarSlab.models
 {
     public class MSlabElementNeighborhood : ObservableObject
     {
@@ -20,23 +22,52 @@ namespace RIMT.InstallRebarSlab.models
         public bool IsSelected { get; set; }
         public Action EventArgsSelector { get; set; }
 
+        public List<CurveLoop> AllCurveLoops { get; set; }
+        public CurveLoop MainCurveLoop { get; set; }
+        public List<MSlabOpening> Openings { get; set; }
+
         public MSlabElementNeighborhood(Element element)
         {
             Element = element;
             Solids = Element.GetSolids().Where(x => x.Volume.IsGreater(0)).ToList();
+            try
+            {
+                AllCurveLoops = Solids
+                        .Select(x => x.GetFacesFromSolid())
+                        .Aggregate((a, b) => a.Concat(b).ToList())
+                        .Select(x => x.GetEdgesAsCurveLoops())
+                        .Aggregate((a, b) => a.Concat(b).ToList())
+                        .Where(x => x.GetPlane().Normal.AngleTo(XYZ.BasisZ).IsSmallerEqual(Math.PI / 18))
+                        .OrderBy(x => x.GetArea())
+                        .ToList();
 
-            var curveLoops = Solids
-                    .Select(x => x.GetFacesFromSolid())
-                    .Aggregate((a, b) => a.Concat(b).ToList())
-                    .Select(x => x.GetEdgesAsCurveLoops())
-                    .Aggregate((a, b) => a.Concat(b).ToList())
-                    .Where(x => x.GetPlane().Normal.AngleTo(XYZ.BasisZ).IsSmallerEqual(Math.PI / 18))
+                MainCurveLoop = AllCurveLoops.LastOrDefault();
+                Openings = GetOpenings();
+                Points = AllCurveLoops.Select(x => x.GetPoints()).Aggregate((a, b) => a.Concat(b).ToList());
+                PointsOnFloorPlan = MainCurveLoop.GetPoints()
+                    .Select(x => x.EditZ(0))
+                    .Distinct(new ComparePoint())
                     .ToList();
-            Points = curveLoops.Select(x => x.GetPoints()).Aggregate((a, b) => a.Concat(b).ToList());
-            PointsOnFloorPlan = Points
-                .Select(x => x.EditZ(0))
-                .Distinct(new ComparePoint())
-                .ToList();
+            }
+            catch (Exception)
+            {
+            }
+        }
+        private List<MSlabOpening> GetOpenings()
+        {
+            var result = new List<MSlabOpening>();
+            try
+            {
+                result = Element is Floor floor
+                    ? AllCurveLoops.Count() < 2
+                            ? new List<MSlabOpening>()
+                            : AllCurveLoops.Slice(0, AllCurveLoops.Count() - 1).Select(x => new MSlabOpening(floor, x)).ToList()
+                    : new List<MSlabOpening>();
+            }
+            catch (Exception)
+            {
+            }
+            return result;
         }
 
         public void ActionElementSelected()

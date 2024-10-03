@@ -1,15 +1,17 @@
 ﻿using HcBimUtils.DocumentUtils;
+using RevitDevelop.InstallRebarSlab.models;
 using RevitDevelop.Tools.InstallRebarSlab.views;
-using RIMT.InstallRebarSlab.models;
+using RevitDevelop.Utils.NumberingRevitElements;
+using RIMT.SettingRuleRebarStandards.viewModels;
 using System.Windows.Controls;
 using Utils.canvass;
 using Utils.SkipWarnings;
 
-namespace RIMT.InstallRebarSlab.viewModels
+namespace RevitDevelop.InstallRebarSlab.viewModels
 {
     public partial class InstallRebarSlabViewModel : ObservableObject
     {
-        public InstallRebarSlabView MainView { get; private set; }
+        public InstallRebarSlabViewMain MainView { get; private set; }
         public CanvasPageBase CanvasPageBase { get; private set; }
         public CanvasPageBase CanvasPageBaseCoordinate { get; private set; }
         public MSLabElementIntance MSLabElementIntance { get; private set; }
@@ -27,10 +29,22 @@ namespace RIMT.InstallRebarSlab.viewModels
                     InstallRebarSlabModel);
             };
             InstallRebarSlabModel = new InstallRebarSlabModel(mSLabElementIntance, mSlab);
-            MainView = new InstallRebarSlabView() { DataContext = this };
+            MainView = new InstallRebarSlabViewMain() { DataContext = this };
             MainView.Loaded += MainView_Loaded;
         }
 
+        [RelayCommand]
+        private void SettingAnchor()
+        {
+            try
+            {
+                var vm = new SettingLapLengthAndDevelopRebarRuleViewModel();
+                vm.MainView.ShowDialog();
+            }
+            catch (Exception)
+            {
+            }
+        }
         [RelayCommand]
         private void CreateRebarSlab()
         {
@@ -45,19 +59,31 @@ namespace RIMT.InstallRebarSlab.viewModels
                     foreach (var r in mslab.MSlabRebar.TopX.MSlabRebars)
                     {
                         r.CreateRebar();
+                        mslab.MSlabRebar.AllRebars.Add(r.RebarNumbering);
                     }
                     foreach (var r in mslab.MSlabRebar.TopY.MSlabRebars)
                     {
                         r.CreateRebar();
+                        mslab.MSlabRebar.AllRebars.Add(r.RebarNumbering);
                     }
                     foreach (var r in mslab.MSlabRebar.BotX.MSlabRebars)
                     {
                         r.CreateRebar();
+                        mslab.MSlabRebar.AllRebars.Add(r.RebarNumbering);
                     }
                     foreach (var r in mslab.MSlabRebar.BotY.MSlabRebars)
                     {
                         r.CreateRebar();
+                        mslab.MSlabRebar.AllRebars.Add(r.RebarNumbering);
                     }
+                    //set solid
+                    //numbering rebar
+                    NumberingRevitRebar.Numbering(mslab.MSlabRebar.AllRebars, MSLabElementIntance.OptionNumberingTypeRebars, MSLabElementIntance.RebarSlabSchemaInfo);
+                    //create assembly rebar
+                    var rebarAssebly = AssemblyInstance.Create(
+                        AC.Document,
+                        mslab.MSlabRebar.AllRebars.Select(x => new ElementId(int.Parse(x.ElementId.ToString()))).ToList(),
+                        Category.GetCategory(AC.Document, BuiltInCategory.OST_Rebar).Id);
                 }
                 //--------
                 ts.Commit();
@@ -146,6 +172,34 @@ namespace RIMT.InstallRebarSlab.viewModels
                     msl.MSlabRebar.BotX.Direction = vtX;
                     msl.MSlabRebar.BotY.Direction = vtY;
 
+                    MSlabRebarLayer.NormalEventActionF(
+                            msl.MSlabRebar.TopX,
+                            InstallRebarSlabModel.MSlabs,
+                            CanvasPageBase,
+                            InstallRebarSlabModel.MSlabCenter,
+                            InstallRebarSlabModel);
+
+                    MSlabRebarLayer.NormalEventActionF(
+                            msl.MSlabRebar.TopY,
+                            InstallRebarSlabModel.MSlabs,
+                            CanvasPageBase,
+                            InstallRebarSlabModel.MSlabCenter,
+                            InstallRebarSlabModel);
+
+                    MSlabRebarLayer.NormalEventActionF(
+                            msl.MSlabRebar.BotX,
+                            InstallRebarSlabModel.MSlabs,
+                            CanvasPageBase,
+                            InstallRebarSlabModel.MSlabCenter,
+                            InstallRebarSlabModel);
+
+                    MSlabRebarLayer.NormalEventActionF(
+                            msl.MSlabRebar.BotY,
+                            InstallRebarSlabModel.MSlabs,
+                            CanvasPageBase,
+                            InstallRebarSlabModel.MSlabCenter,
+                            InstallRebarSlabModel);
+
                     MSlabRebarLayer.SpacingEventActionF(
                             msl.MSlabRebar.RebarLayerActive,
                             InstallRebarSlabModel.MSlabs,
@@ -153,6 +207,7 @@ namespace RIMT.InstallRebarSlab.viewModels
                             InstallRebarSlabModel.MSlabCenter,
                             OptionStyleInstanceInCanvas.OPTION_REBAR,
                             InstallRebarSlabModel);
+
                 }
             };
 
@@ -170,7 +225,7 @@ namespace RIMT.InstallRebarSlab.viewModels
             //vẽ lỗ mở trên canvas
             foreach (var mSlab in InstallRebarSlabModel.MSlabs)
             {
-                foreach (var plg in mSlab.PointsSlabOpeningOnFloorPlan)
+                foreach (var plg in mSlab.MSlabOpenings)
                 {
                     var opening = new InstanceInCanvasPolygon(canvasPageBase, OptionStyleInstanceInCanvas.OPTION_OPENING, plg.Points.Select(x => x.ConvertPointRToC(InstallRebarSlabModel.MSlabCenter, canvasPageBase)));
                     mSlab.OpeningsInCanvas.Add(opening.UIElement as System.Windows.Shapes.Polygon);
@@ -185,6 +240,16 @@ namespace RIMT.InstallRebarSlab.viewModels
                 neighborhood.EventArgsSelector = () => { MSlabElementNeighborhood.MSlabElementNeighborhoodEventArgsSelector(InstallRebarSlabModel.MSlabElementNeighborhoods, neighborhood); };
                 neighborhood.UIElement.MouseLeftButtonDown += (o, e) => { neighborhood.ActionElementSelected(); };
                 slab.DrawInCanvas();
+            }
+            //vẽ lỗ mở của các đối tượng xung quanh trên canvas
+            foreach (var ele in InstallRebarSlabModel.MSlabElementNeighborhoods)
+            {
+                foreach (var plg in ele.Openings)
+                {
+                    var opening = new InstanceInCanvasPolygon(canvasPageBase, OptionStyleInstanceInCanvas.OPTION_OPENING, plg.Points.Select(x => x.ConvertPointRToC(InstallRebarSlabModel.MSlabCenter, canvasPageBase)));
+                    //ele.OpeningsInCanvas.Add(opening.UIElement as System.Windows.Shapes.Polygon);
+                    opening.DrawInCanvas();
+                }
             }
             //vẽ thép sàn 
             foreach (var mSlab in InstallRebarSlabModel.MSlabs)

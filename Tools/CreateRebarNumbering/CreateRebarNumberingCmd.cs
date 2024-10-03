@@ -47,7 +47,7 @@ namespace RevitDevelop.Tools.CreateRebarNumbering
                     {
                         ts.Start();
                         //--------
-                        var results = NumberingRevitRebar.Numbering(rebars, optionsNumbering, schemaRebarNumberingInfo);
+                        NumberingRevitRebar.Numbering(rebarInfos, optionsNumbering, schemaRebarNumberingInfo);
                         //--------
                         ts.Commit();
                     }
