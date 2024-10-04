@@ -2,6 +2,7 @@
 {
     public class StyleThicknessInCanvas
     {
+        public static double Thickness_0dot5 = 0.5;
         public static double Thickness_1 = 1;
         public static double Thickness_2 = 2;
         public static double Thickness_3 = 3;

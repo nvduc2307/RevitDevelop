@@ -10,6 +10,9 @@ namespace Utils.canvass
         public static SolidColorBrush Color3 = new SolidColorBrush() { Color = System.Windows.Media.Color.FromRgb(255, 255, 0) };
         public static SolidColorBrush Color4 = new SolidColorBrush() { Color = System.Windows.Media.Color.FromRgb(255, 0, 0) };
         public static SolidColorBrush Color5 = new SolidColorBrush() { Color = System.Windows.Media.Color.FromRgb(76, 117, 208) };
+
+        public static SolidColorBrush Color_Red = new SolidColorBrush() { Color = System.Windows.Media.Color.FromRgb(255, 0, 0) };
+        public static SolidColorBrush Color_Blue = new SolidColorBrush() { Color = System.Windows.Media.Color.FromRgb(0, 0, 255) };
         public static SolidColorBrush Color_White = new SolidColorBrush() { Color = System.Windows.Media.Color.FromRgb(255, 255, 255) };
         public static SolidColorBrush Color_BackGround = new SolidColorBrush() { Color = System.Windows.Media.Color.FromRgb(238, 238, 238) };
 

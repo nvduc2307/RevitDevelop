@@ -28,7 +28,7 @@ namespace Utils.RevPoints
             return r;
         }
 
-        public static XYZ CenterPoint(this List<XYZ> points)
+        public static XYZ GetCenter(this List<XYZ> points)
         {
             var x = points.Select(a => a.X).ToList();
             var y = points.Select(a => a.Y).ToList();

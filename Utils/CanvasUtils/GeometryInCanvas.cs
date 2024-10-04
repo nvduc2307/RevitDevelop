@@ -1,5 +1,4 @@
-﻿using HcBimUtils;
-using Utils.Messages;
+﻿using Utils.Messages;
 using PointCanvas = System.Windows.Point;
 using VectorCanvas = System.Windows.Vector;
 
@@ -16,10 +15,6 @@ namespace Utils.canvass
         {
             return Math.Sqrt(p.X * p.X + p.Y * p.Y);
         }
-        public static PointCanvas Vt(this PointCanvas p1, PointCanvas p2)
-        {
-            return new PointCanvas(p2.X - p1.X, p2.Y - p1.Y);
-        }
         public static PointCanvas VtNormal(this PointCanvas p)
         {
             var d = p.VtDistance();
@@ -28,22 +23,6 @@ namespace Utils.canvass
         public static PointCanvas GetVector(this PointCanvas p1, PointCanvas p2)
         {
             return new PointCanvas(p2.X - p1.X, p2.Y - p1.Y);
-        }
-        public static IEnumerable<PointCanvas> ConvertPoint(this IEnumerable<XYZ> points, double canvasScale)
-        {
-            var result = new List<PointCanvas>();
-            if (points.Count() > 0)
-            {
-                foreach (var point in points)
-                {
-                    result.Add(point.ConvertPoint(canvasScale));
-                }
-            }
-            return result;
-        }
-        public static PointCanvas ConvertPoint(this XYZ point, double canvasScale)
-        {
-            return new PointCanvas(point.X.FootToMm() * canvasScale, -point.Y.FootToMm() * canvasScale);
         }
         public static PointCanvas Rotate(this PointCanvas p, PointCanvas c, double angle)
         {

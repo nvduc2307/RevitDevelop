@@ -30,8 +30,6 @@ namespace Utils.canvass
             Center = new wd.Point(Width / 2, Height / 2);
             VTX = new Vector(1, 0);
             VTY = new Vector(0, 1);
-            parent.Background = StyleColorInCanvas.Color2;
-            //if (activeZoomPan) parent.ActiveZoomPan();
         }
 
         public static double CalcularScale(double maximumLengthInRevit, double maximumLengthInCanvas)

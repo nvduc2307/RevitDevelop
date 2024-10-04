@@ -19,6 +19,18 @@
                 StrokeDashArray = Options.LineStyle,
                 Stroke = Options.ColorBrush
             };
+            UIElement.MouseLeftButtonUp += UIElement_MouseLeftButtonUp;
+            UIElement.MouseRightButtonUp += UIElement_MouseRightButtonUp;
+        }
+
+        private void UIElement_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ClickLeftMouse?.Invoke();
+        }
+
+        private void UIElement_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ClickRightMouse?.Invoke();
         }
     }
 }

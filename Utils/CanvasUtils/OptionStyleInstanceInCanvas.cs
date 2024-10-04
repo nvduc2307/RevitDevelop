@@ -10,18 +10,28 @@ namespace Utils.canvass
                 StyleDashInCanvas.Style_Solid,
                 StyleColorInCanvas.Color_Concrete_OutLine,
                 StyleColorInCanvas.Color_Concrete);
+
         public static OptionStyleInstanceInCanvas OPTION_OPENING =
             new OptionStyleInstanceInCanvas(
                 StyleThicknessInCanvas.Thickness_2,
                 StyleDashInCanvas.Style_Solid,
                 StyleColorInCanvas.Color_Concrete_OutLine,
                 StyleColorInCanvas.Color_BackGround);
+
         public static OptionStyleInstanceInCanvas OPTION_REBAR =
              new OptionStyleInstanceInCanvas(
                 StyleThicknessInCanvas.Thickness_1,
                 StyleDashInCanvas.Style_Solid,
                 StyleColorInCanvas.Color_Rebar,
                 StyleColorInCanvas.Color_Rebar);
+
+        public static OptionStyleInstanceInCanvas OPTION_GRID =
+             new OptionStyleInstanceInCanvas(
+                StyleThicknessInCanvas.Thickness_0dot5,
+                StyleDashInCanvas.Style_Grid,
+                StyleColorInCanvas.Color_Red,
+                null);
+
         public double Thickness { get; set; }
         public DoubleCollection LineStyle { get; set; }
         public SolidColorBrush ColorBrush { get; set; }
