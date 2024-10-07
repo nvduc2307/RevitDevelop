@@ -4,6 +4,13 @@ namespace Utils.canvass
 {
     public class OptionStyleInstanceInCanvas
     {
+        public static OptionStyleInstanceInCanvas OPTION_CONCRETE_STRUCTURE =
+            new OptionStyleInstanceInCanvas(
+                StyleThicknessInCanvas.Thickness_0dot2,
+                StyleDashInCanvas.Style_Solid,
+                StyleColorInCanvas.Color_Concrete_OutLine,
+                StyleColorInCanvas.Color_Concrete);
+
         public static OptionStyleInstanceInCanvas OPTION_CONCRETE =
             new OptionStyleInstanceInCanvas(
                 StyleThicknessInCanvas.Thickness_2,
@@ -27,8 +34,14 @@ namespace Utils.canvass
 
         public static OptionStyleInstanceInCanvas OPTION_GRID =
              new OptionStyleInstanceInCanvas(
-                StyleThicknessInCanvas.Thickness_0dot5,
+                StyleThicknessInCanvas.Thickness_0dot3,
                 StyleDashInCanvas.Style_Grid,
+                StyleColorInCanvas.Color_Red,
+                null);
+        public static OptionStyleInstanceInCanvas OPTION_GRID_Note =
+             new OptionStyleInstanceInCanvas(
+                StyleThicknessInCanvas.Thickness_0dot3,
+                StyleDashInCanvas.Style_Solid,
                 StyleColorInCanvas.Color_Red,
                 null);
 

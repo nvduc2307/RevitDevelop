@@ -36,14 +36,13 @@ namespace Utils.canvass
                 el.Cursor = System.Windows.Input.Cursors.Hand;
                 el.Fill = Options.Fill;
             };
-            var vt = CanvasPageBase.Center.GetVector(CanvasPageBase.Center);
-            var p = new wd.Point(Point.X + VectorInit.X * Diameter / 2, Point.Y + VectorInit.Y * Diameter / 2);
-            p = new wd.Point(p.X - vt.X, p.Y - vt.Y);
+            var p = new wd.Point(Point.X - Diameter / 2 - VectorInit.X * Diameter / 2,
+                Point.Y - Diameter / 2 - VectorInit.Y * Diameter / 2);
             Canvas.SetLeft(UIElement, p.X);
             Canvas.SetTop(UIElement, p.Y);
 
-            Canvas.SetLeft(Title, p.X + 3);
-            Canvas.SetTop(Title, p.Y + 2);
+            Canvas.SetLeft(Title, p.X + 4);
+            Canvas.SetTop(Title, p.Y - 1);
         }
     }
 }

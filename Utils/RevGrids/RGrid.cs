@@ -1,43 +1,102 @@
-﻿using Utils.canvass;
+﻿using RevitDevelop.Utils.RevElements;
+using Utils.canvass;
 
 namespace RevitDevelop.Utils.RevGrids
 {
-    public class RGrid
+    public class RGrid : RElement
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public Grid Grid { get; set; }
-        public XYZ RCenter { get; set; }
+        public XYZ PS { get; set; }
+        public XYZ PE { get; set; }
         public InstanceInCanvasLine CGrid { get; set; }
-        public CanvasPageBase CanvasPageBase { get; set; }
-        public RGrid(int id, Grid grid, XYZ rCenter, CanvasPageBase canvasPageBase)
+        public InstanceInCanvasCircel StartNote { get; set; }
+        public InstanceInCanvasCircel EndNote { get; set; }
+        public RGrid(int id, object rGrid, XYZ rCenter, CanvasPageBase canvasPageBase) : base(id, rGrid, rCenter, canvasPageBase)
         {
-            Id = id;
-            RCenter = rCenter;
-            CanvasPageBase = canvasPageBase;
-            Grid = grid;
-            Name = grid.Name;
-            CGrid = GetCGrid();
+            CGrid = GetCGrid(out XYZ ps, out XYZ pe, out string name);
+            Name = name;
+            PS = ps;
+            PE = pe;
+            StartNote = GetStartNote();
+            EndNote = GetEndNote();
         }
-        public void DrawInCanvas()
+        private InstanceInCanvasLine GetCGrid(out XYZ ps, out XYZ pe, out string name)
         {
+            ps = null;
+            pe = null;
+            name = null;
+            InstanceInCanvasLine result = null;
             try
             {
-                CGrid.DrawInCanvas();
+                if (RObject is Grid grid)
+                {
+                    name = grid.Name;
+                    var curve = grid.Curve;
+                    ps = curve.GetEndPoint(0);
+                    pe = curve.GetEndPoint(1);
+                    var p1 = curve.GetEndPoint(0).ConvertPointRToC(RCenter, CanvasPageBase);
+                    var p2 = curve.GetEndPoint(1).ConvertPointRToC(RCenter, CanvasPageBase);
+                    result = new InstanceInCanvasLine(CanvasPageBase, OptionStyleInstanceInCanvas.OPTION_GRID, p1, p2);
+                    result.ClickLeftMouse = () =>
+                    {
+                        ClickLeftMouse();
+                    };
+                    result.ClickRightMouse = () =>
+                    {
+                        ClickRightMouse();
+                    };
+                }
             }
             catch (Exception)
             {
             }
+            return result;
         }
-        private InstanceInCanvasLine GetCGrid()
+        private InstanceInCanvasCircel GetStartNote()
         {
-            InstanceInCanvasLine result = null;
+            InstanceInCanvasCircel result = null;
             try
             {
-                var curve = Grid.Curve;
-                var p1 = curve.GetEndPoint(0).ConvertPointRToC(RCenter, CanvasPageBase);
-                var p2 = curve.GetEndPoint(1).ConvertPointRToC(RCenter, CanvasPageBase);
-                result = new InstanceInCanvasLine(CanvasPageBase, OptionStyleInstanceInCanvas.OPTION_GRID, p1, p2);
+                var p1 = PS.ConvertPointRToC(RCenter, CanvasPageBase);
+                var p2 = PE.ConvertPointRToC(RCenter, CanvasPageBase);
+                var vt = p1.GetVector(p2).VtNormal();
+                result = new InstanceInCanvasCircel(
+                    CanvasPageBase,
+                    OptionStyleInstanceInCanvas.OPTION_GRID_Note,
+                    CanvasPageBase.Center,
+                    15,
+                    p1,
+                    vt,
+                    Name);
+                result.ClickLeftMouse = () =>
+                {
+                    ClickLeftMouse();
+                };
+                result.ClickRightMouse = () =>
+                {
+                    ClickRightMouse();
+                };
+            }
+            catch (Exception)
+            {
+            }
+            return result;
+        }
+        private InstanceInCanvasCircel GetEndNote()
+        {
+            InstanceInCanvasCircel result = null;
+            try
+            {
+                var p1 = PS.ConvertPointRToC(RCenter, CanvasPageBase);
+                var p2 = PE.ConvertPointRToC(RCenter, CanvasPageBase);
+                var vt = p1.GetVector(p2).VtNormal();
+                result = new InstanceInCanvasCircel(
+                    CanvasPageBase,
+                    OptionStyleInstanceInCanvas.OPTION_GRID_Note,
+                    CanvasPageBase.Center,
+                    15,
+                    p2,
+                    new System.Windows.Point(-vt.X, -vt.Y),
+                    Name);
                 result.ClickLeftMouse = () =>
                 {
                     ClickLeftMouse();
@@ -57,6 +116,19 @@ namespace RevitDevelop.Utils.RevGrids
         }
         private void ClickRightMouse()
         {
+        }
+
+        public override void DrawInCanvas()
+        {
+            try
+            {
+                CGrid.DrawInCanvas();
+                StartNote.DrawInCanvas();
+                EndNote.DrawInCanvas();
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }
