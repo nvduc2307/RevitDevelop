@@ -148,7 +148,7 @@ namespace RevitDevelop.Tools.InstallConstructionJoinOfWalls.models
             //remove current column
             foreach (var item in viewModel.ElementInstance.RColumnsPreviousLevel)
             {
-                viewModel.CanvasMain.Parent.Children.Remove(item.CColumn.UIElement);
+                viewModel.CanvasMain.Parent.Children.Remove(item.CColumn?.UIElement);
             }
             //draw column in canvas
             foreach (var rColumn in viewModel.ElementInstance.RColumnsCurrentLevel)
@@ -162,7 +162,7 @@ namespace RevitDevelop.Tools.InstallConstructionJoinOfWalls.models
             //remove current wall
             foreach (var item in viewModel.ElementInstance.RWallsPreviousLevel)
             {
-                viewModel.CanvasMain.Parent.Children.Remove(item.CWall.UIElement);
+                viewModel.CanvasMain.Parent.Children.Remove(item.CWall?.UIElement);
             }
             //draw wall in canvas
             foreach (var item in viewModel.ElementInstance.RWallsCurrentLevel)

@@ -25,6 +25,24 @@ namespace RevitDevelop.Utils.RevWalls
             ThicknessMm = thicknessMm;
             LengthMm = lengthMm;
             Polygon = plg;
+            LevelId = GetLevel();
+            CWall = GetCWall();
+        }
+        private ElementId GetLevel()
+        {
+            ElementId result = null;
+            try
+            {
+                if (IsValidObject)
+                {
+                    var wall = RObject as Wall;
+                    result = wall.LevelId;
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return result;
         }
         private bool ValidWall()
         {
@@ -76,7 +94,7 @@ namespace RevitDevelop.Utils.RevWalls
                     var faceX = new FaceCustom(VtY, new XYZ());
                     var faceY = new FaceCustom(VtX, new XYZ());
                     var ps = wall
-                        .GetSingleSolid()
+                        .GetSolidOriginalWall()
                         .GetFacesFromSolid()
                         .Where(x => x != null)
                         .Select(x => x.GetPoints())
