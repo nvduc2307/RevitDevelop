@@ -77,7 +77,6 @@
       <Folder Include="Tools\InstallRebarBeam\services\" />
       <Folder Include="Tools\InstallRebarBeam\utils\" />
       <Folder Include="Tools\CreateRebarSchedule\" />
-      <Folder Include="Tools\InstallRebarColumn\" />
     </ItemGroup>
 
 </Project>

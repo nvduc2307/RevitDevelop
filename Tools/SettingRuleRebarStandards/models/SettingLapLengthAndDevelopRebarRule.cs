@@ -131,4 +131,15 @@
         SD390 = 3,
         SD490 = 4,
     }
+    public enum LapType
+    {
+        LapLength = 1,
+        Coupler = 2,
+        Weld = 3
+    }
+    public enum LapStyle
+    {
+        OneHundredPercen = 1, //100%
+        FityPercen = 2, //50%
+    }
 }
