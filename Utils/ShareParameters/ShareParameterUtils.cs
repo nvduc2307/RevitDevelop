@@ -146,6 +146,7 @@ namespace Utils.Utils.ShareParameters
          return uniqueParameters;
       }
 #endif
+
 #if R22 || R23 || R24 || R25 || R26
       public static List<UniqueParameter> CreateParameterUseShare(
          Document document, 

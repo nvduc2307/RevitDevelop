@@ -13,6 +13,8 @@ namespace Utils.canvass
         public double Height { get; private set; }
         public double Width { get; private set; }
         public double Scale { get; set; }
+        public double ScaleX { get; set; }
+        public double ScaleY { get; set; }
         public double RatioScale { get; set; }
         public wd.Point Center { get; private set; }
         public Vector VTX { get; private set; }
@@ -27,6 +29,23 @@ namespace Utils.canvass
             DistanceCrossScreen = Math.Sqrt(Width * Width + Height * Height);
             RatioScale = 0.7;
             Scale = 0.1;
+            ScaleX = Scale;
+            ScaleY = Scale;
+            Center = new wd.Point(Width / 2, Height / 2);
+            VTX = new Vector(1, 0);
+            VTY = new Vector(0, 1);
+            parent.Background = StyleColorInCanvas.Color2;
+            //if (activeZoomPan) parent.ActiveZoomPan();
+        }
+        public CanvasPageBase(System.Drawing.Size size)
+        {
+            Width = size.Width;
+            Height = size.Height;
+            DistanceCrossScreen = Math.Sqrt(Width * Width + Height * Height);
+            RatioScale = 0.7;
+            Scale = 0.1;
+            ScaleX = Scale;
+            ScaleY = Scale;
             Center = new wd.Point(Width / 2, Height / 2);
             VTX = new Vector(1, 0);
             VTY = new Vector(0, 1);

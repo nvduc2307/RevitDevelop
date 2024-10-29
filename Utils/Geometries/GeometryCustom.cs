@@ -169,6 +169,53 @@ namespace Utils.Geometries
             }
             return reuslts;
         }
+        public static LineCustom FaceIntersectFace(this FaceCustom f1, FaceCustom f2)
+        {
+            LineCustom result = null;
+            try
+            {
+                if (f1.Normal.IsSeem(f2.Normal)) throw new Exception();
+                var lDir = f1.Normal.CrossProduct(f2.Normal);
+                var lDir1 = lDir.CrossProduct(f1.Normal);
+                var p1 = f1.BasePoint.RayPointToFace(lDir1, f2);
+                result = new LineCustom(lDir, p1);
+            }
+            catch (Exception)
+            {
+                result = null;
+            }
+            return result;
+        }
+        public static XYZ Rotate(this XYZ p, FaceCustom f1, FaceCustom f2)
+        {
+            //p phai thuoc mp f1
+            var result = p;
+            try
+            {
+                var axis = f1.FaceIntersectFace(f2);
+                var angle = f1.Normal.AngleTo(f2.Normal);
+                var f = new FaceCustom(axis.Direction, p);
+                var pc = axis.BasePoint.RayPointToFace(axis.Direction, f);
+                var l = f.FaceIntersectFace(f2);
+                var vt = (p - pc).Normalize();
+                result = vt.DotProduct(f2.Normal) > 0
+                    ? pc + l.Direction * pc.Distance(p)
+                    : pc - l.Direction * pc.Distance(p);
+            }
+            catch (Exception)
+            {
+                result = p;
+            }
+            return result;
+        }
+        public static XYZ Rotate(this XYZ p, XYZ c, double degRad)
+        {
+            var pn = new XYZ(p.X, p.Y, 0);
+            var cn = new XYZ(c.X, c.Y, 0);
+            var x = cn.X + (pn.X - cn.X) * Math.Cos(degRad) - (pn.Y - cn.Y) * Math.Sin(degRad);
+            var y = cn.Y + (pn.X - cn.X) * Math.Sin(degRad) + (pn.Y - cn.Y) * Math.Cos(degRad);
+            return new XYZ(x, y, c.Z);
+        }
 
         public static double AngleTo(this XYZ vt1, XYZ vt2)
         {
