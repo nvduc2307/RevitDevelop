@@ -25,7 +25,9 @@ namespace RevitDevelop.Utils.NumberingRevitElements
         public bool StartThread { get; set; } // Ren
         public bool EndThread { get; set; } // Ren
         public int CouplerCount { get; set; }
+        public int WeldCount { get; set; }
         public string Image { get; set; }
+        public string PathSaveImage { get; set; }
         public int Unit { get; set; }
         public NumberingRevitRebar(Rebar rebar)
         {
