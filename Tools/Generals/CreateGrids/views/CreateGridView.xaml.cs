@@ -12,14 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace RevitDevelop.Tools.InstallConstructionJoinOfWalls.views
+namespace RevitDevelop.Tools.Generals.CreateGrids.views
 {
     /// <summary>
-    /// Interaction logic for InstallConstructionJoinOfWallView.xaml
+    /// Interaction logic for CreateGridView.xaml
     /// </summary>
-    public partial class InstallConstructionJoinOfWallView : Window
+    public partial class CreateGridView : Window
     {
-        public InstallConstructionJoinOfWallView()
+        public CreateGridView()
         {
             InitializeComponent();
         }

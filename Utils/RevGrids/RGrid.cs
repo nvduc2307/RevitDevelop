@@ -1,5 +1,7 @@
-﻿using RevitDevelop.Utils.RevElements;
+﻿using HcBimUtils;
+using RevitDevelop.Utils.RevElements;
 using Utils.canvass;
+using Utils.Geometries;
 
 namespace RevitDevelop.Utils.RevGrids
 {
@@ -117,7 +119,6 @@ namespace RevitDevelop.Utils.RevGrids
         private void ClickRightMouse()
         {
         }
-
         public override void DrawInCanvas()
         {
             try
@@ -129,6 +130,22 @@ namespace RevitDevelop.Utils.RevGrids
             catch (Exception)
             {
             }
+        }
+    }
+    public class RevGrid
+    {
+        public int Id { get; }
+        public string Name { get; }
+        public Grid Grid { get; }
+        public Curve Curve { get; }
+        public FaceCustom Face { get; }
+        public RevGrid(Grid grid)
+        {
+            Id = int.Parse(grid.Id.ToString());
+            Name = grid.Name;
+            Grid = grid;
+            Curve = grid.Curve;
+            Face = new FaceCustom(Curve.Direction().CrossProduct(XYZ.BasisZ), Curve.Midpoint());
         }
     }
 }

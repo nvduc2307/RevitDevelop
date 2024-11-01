@@ -5,7 +5,7 @@
         <LangVersion>latest</LangVersion>
         <PlatformTarget>x64</PlatformTarget>
         <ImplicitUsings>true</ImplicitUsings>
-        <PublishAddinFiles>true</PublishAddinFiles>
+        <PublishAddinFiles>false</PublishAddinFiles>
         <Configurations>Debug R20;Debug R21;Debug R22;Debug R23;Debug R24;Debug R25</Configurations>
         <Configurations>$(Configurations);Release R20;Release R21;Release R22;Release R23;Release R24;Release R25</Configurations>
     </PropertyGroup>
@@ -52,6 +52,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Chuongmep.Acad.Api.accoremgd" Version="2024.0.1" />
+        <PackageReference Include="Chuongmep.Acad.Api.AcCui" Version="2024.0.1" />
+        <PackageReference Include="Chuongmep.Acad.Api.acdbmgd" Version="2024.0.1" />
+        <PackageReference Include="Chuongmep.Acad.Api.acmgd" Version="2024.0.1" />
+        <PackageReference Include="Chuongmep.Acad.Api.AdWindows" Version="2024.0.1" />
+        <PackageReference Include="Chuongmep.Acad.Api.Autodesk.AutoCAD.Interop.Common" Version="2024.0.1" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="HcBimUtils" Version="$(RevitVersion).*" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -69,9 +75,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Tools\Rebars\InstallConstructionJoinOfWalls\services\" />
-      <Folder Include="Tools\Rebars\InstallConstructionJoinOfWalls\exceptions\" />
-      <Folder Include="Tools\Rebars\InstallConstructionJoinOfWalls\iServices\" />
       <Folder Include="Tools\Rebars\InstallRebarBeam\images\" />
       <Folder Include="Tools\Rebars\InstallRebarBeam\iservices\" />
       <Folder Include="Tools\Rebars\InstallRebarBeam\services\" />
@@ -87,6 +90,11 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>Appplication.resx</DependentUpon>
       </Compile>
+      <Compile Update="Properties\Langs\CreateGridView.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>CreateGridView.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -96,6 +104,13 @@
       <EmbeddedResource Update="Properties\Langs\Appplication.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>Appplication.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Properties\Langs\CreateGridView.ja-JP.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Properties\Langs\CreateGridView.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>CreateGridView.Designer.cs</LastGenOutput>
       </EmbeddedResource>
     </ItemGroup>
 

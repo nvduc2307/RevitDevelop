@@ -1,5 +1,5 @@
 ﻿using HcBimUtils;
-using Tools.InstallRebarBeam.model;
+using RevitDevelop.Tools.Rebars.InstallRebarBeam.model;
 using Utils.Geometries;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarBeam.validates

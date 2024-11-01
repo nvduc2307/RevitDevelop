@@ -1,8 +1,8 @@
 ﻿using Autodesk.Revit.Attributes;
 using HcBimUtils.DocumentUtils;
 using Nice3point.Revit.Toolkit.External;
-using RevitDevelop.InstallRebarSlab.models;
 using RevitDevelop.InstallRebarSlab.viewModels;
+using RevitDevelop.Tools.Rebars.InstallRebarSlab.models;
 using Utils.SelectionFilterInRevit;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarSlab

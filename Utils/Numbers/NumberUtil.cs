@@ -29,6 +29,23 @@ namespace Utils.NumberUtils
             var vl = re.Match(t);
             return string.IsNullOrEmpty(vl.Value) ? 0 : int.Parse(vl.Value);
         }
+        public static bool CheckNumberInStrings(this List<string> numberValues)
+        {
+            return numberValues.Any(x =>
+            {
+                var result = false;
+                try
+                {
+                    var numberValid = double.Parse(x, System.Globalization.NumberStyles.Number);
+                    result = false;
+                }
+                catch (Exception)
+                {
+                    result = true;
+                }
+                return result;
+            });
+        }
     }
 
     public class DoubleComparer(double tolerance = 1E-09) : EqualityComparer<double>

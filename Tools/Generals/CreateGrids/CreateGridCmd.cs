@@ -1,23 +1,23 @@
 ﻿using Autodesk.Revit.Attributes;
 using HcBimUtils.DocumentUtils;
 using Nice3point.Revit.Toolkit.External;
-using RevitDevelop.Tools.InstallConstructionJoinOfWalls.viewModels;
+using RevitDevelop.Tools.Generals.CreateGrids.modelViews;
 
-namespace RevitDevelop.Tools.Rebars.InstallConstructionJoinOfWalls
+namespace RevitDevelop.Tools.Generals.CreateGrids
 {
     [Transaction(TransactionMode.Manual)]
-    public class InstallConstructionJoinOfWallsCmd : ExternalCommand
+    public class CreateGridCmd : ExternalCommand
     {
         public override void Execute()
         {
             AC.GetInformation(UiDocument);
-            using (var tsg = new TransactionGroup(Document, "Install_Construction_Join_Of_Walls"))
+            using (var tsg = new TransactionGroup(Document, "name transaction group"))
             {
                 tsg.Start();
                 try
                 {
                     //--------
-                    var vm = new InstallConstructionJoinOfWallViewModel();
+                    var vm = new CreateGridsModelViews();
                     vm.MainView.ShowDialog();
                     //--------
                     tsg.Assimilate();
