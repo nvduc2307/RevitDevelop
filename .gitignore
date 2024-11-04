@@ -22,4 +22,5 @@
 
 #Ignore Content folder in folder InnoSetup
 /InnoSetup/Content/
+/InnoSetup/bin/
 RevitApp/Properties/launchSettings.json
