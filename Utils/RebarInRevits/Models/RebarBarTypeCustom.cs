@@ -45,7 +45,7 @@ namespace Utils.RebarInRevits.Models
                             var typeNew = isExited == null
                                 ? typeBase.Duplicate(item.NameStyle) as RebarBarType
                                 : isExited;
-#if R21
+#if REVIT2021
                             typeNew.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).Set(item.BarDiameter.MmToFoot());
 #else 
                             typeNew.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).Set(item.BarDiameter.MmToFoot());
@@ -67,7 +67,7 @@ namespace Utils.RebarInRevits.Models
         private void GetRebarBarTypeProperties()
         {
             NameStyle = RebarBarType.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME).AsValueString();
-#if R21
+#if REVIT2021
             BarDiameter = RebarBarType.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble();
             ModelBarDiameter = RebarBarType.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble();
 #else

@@ -32,7 +32,7 @@ namespace RevitDevelop.Utils.NumberingRevitElements
         public NumberingRevitRebar(Rebar rebar)
         {
             ElementId = int.Parse(rebar.Id.ToString());
-#if R21
+#if REVIT2021
             Diameter = rebar.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble().FootToMm();
 #else
             Diameter = rebar.get_Parameter(BuiltInParameter.REBAR_MODEL_BAR_DIAMETER).AsDouble().FootToMm();
@@ -170,7 +170,7 @@ namespace RevitDevelop.Utils.NumberingRevitElements
                     result = new CompareRebar(BuiltInParameter.REBAR_SHAPE);
                     break;
                 case OptionNumberingTypeRebar.Diameter:
-#if R21
+#if REVIT2021
                     result = new CompareRebar(BuiltInParameter.REBAR_BAR_DIAMETER);
 #else
                     result = new CompareRebar(BuiltInParameter.REBAR_MODEL_BAR_DIAMETER);

@@ -118,7 +118,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
             try
             {
                 Sketch sket = null;
-#if R21
+#if REVIT2021
                 var elementFilter = new ElementClassFilter(typeof(Sketch), false);
                 var skets = Floor.GetDependentElements(elementFilter).Select(x => AC.Document.GetElement(x) as Sketch);
                 sket = AC.Document.GetElement(skets.FirstOrDefault().Id) as Sketch;

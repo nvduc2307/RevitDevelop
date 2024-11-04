@@ -5,7 +5,7 @@
         <LangVersion>latest</LangVersion>
         <PlatformTarget>x64</PlatformTarget>
         <ImplicitUsings>true</ImplicitUsings>
-        <PublishAddinFiles>false</PublishAddinFiles>
+        <PublishAddinFiles>true</PublishAddinFiles>
         <Configurations>Debug R20;Debug R21;Debug R22;Debug R23;Debug R24;Debug R25</Configurations>
         <Configurations>$(Configurations);Release R20;Release R21;Release R22;Release R23;Release R24;Release R25</Configurations>
     </PropertyGroup>
@@ -113,5 +113,9 @@
         <LastGenOutput>CreateGridView.Designer.cs</LastGenOutput>
       </EmbeddedResource>
     </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="if &quot;$(ConfigurationName)&quot; == &quot;Release R21&quot; xcopy &quot;$(TargetDir)*&quot; &quot;$(SolutionDir)\InnoSetup\Content\$(RevitVersion)\$(TargetName)&quot; /E /H /C /I /K /D /Y&#xD;&#xA;if &quot;$(ConfigurationName)&quot; == &quot;Release R22&quot; xcopy &quot;$(TargetDir)*&quot; &quot;$(SolutionDir)\InnoSetup\Content\$(RevitVersion)\$(TargetName)&quot; /E /H /C /I /K /D /Y&#xD;&#xA;if &quot;$(ConfigurationName)&quot; == &quot;Release R23&quot; xcopy &quot;$(TargetDir)*&quot; &quot;$(SolutionDir)\InnoSetup\Content\$(RevitVersion)\$(TargetName)&quot; /E /H /C /I /K /D /Y&#xD;&#xA;if &quot;$(ConfigurationName)&quot; == &quot;Release R24&quot; xcopy &quot;$(TargetDir)*&quot; &quot;$(SolutionDir)\InnoSetup\Content\$(RevitVersion)\$(TargetName)&quot; /E /H /C /I /K /D /Y&#xD;&#xA;&#xD;&#xA;copy &quot;$(ProjectDir)*.addin&quot; &quot;$(SolutionDir)\InnoSetup\Content\$(RevitVersion)&quot;" />
+    </Target>
 
 </Project>
