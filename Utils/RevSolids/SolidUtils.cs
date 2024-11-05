@@ -1,6 +1,6 @@
 ﻿using HcBimUtils;
 
-namespace Utils.Solids
+namespace Utils.RevSolids
 {
     public static class SolidUtils
     {
@@ -62,6 +62,45 @@ namespace Utils.Solids
                 result = GeometryCreationUtilities.CreateExtrusionGeometry(new List<CurveLoop>() { curveLoop }, XYZ.BasisZ, heightMm.MmToFoot());
             }
             return result;
+        }
+        private static Solid UnionSolid(Solid source, List<Solid> solids)
+        {
+            if (source == null) return null;
+            if (solids == null || solids.Count == 0) return source;
+            Solid result = source;
+            Solid sl1 = null;
+
+            foreach (var sl in solids)
+            {
+                if (sl == null) continue;
+                try
+                {
+                    sl1 = BooleanOperationsUtils.ExecuteBooleanOperation(result, sl, BooleanOperationsType.Union);
+                }
+                catch
+                {
+                }
+                if (sl1 != null)
+                {
+                    result = sl1;
+                }
+            }
+
+            return result;
+        }
+        public static Solid CreateSolidFromCurveLoops(CurveLoop mainLoop, List<CurveLoop> loops, double height)
+        {
+            XYZ vertical = (height >= 0 ? 1 : -1) * XYZ.BasisZ;
+            double h = Math.Abs(height);
+
+            var mainSolid = GeometryCreationUtilities.CreateExtrusionGeometry(new List<CurveLoop>() { mainLoop }, vertical, h);
+            var subSolids = loops.Select(x => GeometryCreationUtilities.CreateExtrusionGeometry(new List<CurveLoop>() { x }, vertical, h));
+            Solid solid = mainSolid;
+            foreach (var sl in subSolids)
+            {
+                solid = BooleanOperationsUtils.ExecuteBooleanOperation(solid, sl, BooleanOperationsType.Difference);
+            }
+            return solid;
         }
     }
 }

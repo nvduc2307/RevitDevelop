@@ -2,13 +2,12 @@
 using HcBimUtils.DocumentUtils;
 using HcBimUtils.GeometryUtils.Geometry;
 using HcBimUtils.MoreLinq;
-using RevitDevelop.Utils.Floors;
-using Utils.Assemblies;
 using Utils.canvass;
 using Utils.CompareElement;
-using Utils.Curveloops;
 using Utils.Geometries;
-using Utils.Solids;
+using Utils.RevAssemblies;
+using Utils.RevCurveloops;
+using Utils.RevSolids;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
 {
@@ -36,7 +35,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
         public List<MSlabOpening> MSlabOpenings { get; set; }
         public List<Grid> GridsAround { get; set; }
         public MSLabElementIntance MSLabElementIntance { get; set; }
-        public List<AssemblyInfo> AssemblyRebarFloors { get; set; }
+        public List<RevAssembly> AssemblyRebarFloors { get; set; }
         public List<FaceCustom> FaceSections { get; set; }
         public List<System.Windows.Shapes.Polygon> OpeningsInCanvas { get; set; } = new List<System.Windows.Shapes.Polygon>();
         public System.Windows.Shapes.Polygon SlabInCanvas { get; set; }
@@ -68,8 +67,6 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
             Angle = GetAngle();
             ElementsAround = GetElementsAround();
             PointsAround = GetPointsAround();
-            GridsAround = GetGridsAround();
-            AssemblyRebarFloors = GetAssemblyRebarFloor();
             FaceSections = GetFaceSections();
             PointsSlabOnFloorPlan = GetPointsSlabOnFloorPlan(out List<MSlabOpening> openings);
             MSlabOpenings = openings;
@@ -202,7 +199,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
             var result = new List<XYZ>();
             try
             {
-                result = CurveloopExt.GetPoints(Profiles.LastOrDefault());
+                result = RevCurveloopUtils.GetPoints(Profiles.LastOrDefault());
                 openings = Profiles.Count == 1
                 ? new List<MSlabOpening>()
                 : Profiles.Slice(0, Profiles.Count - 1).Select(x => new MSlabOpening(Floor, x)).ToList();
@@ -324,7 +321,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
                 .Aggregate((a, b) => a.Concat(b).ToList())
                 .Select(x => x.GetEdgesAsCurveLoops())
                 .Aggregate((a, b) => a.Concat(b).ToList())
-                .Select(x => CurveloopExt.GetPoints(x))
+                .Select(x => RevCurveloopUtils.GetPoints(x))
                 .Aggregate((a, b) => a.Concat(b).ToList())
                 .Select(x => x.EditZ(FloorMinZ))
                 .ToList();
@@ -333,70 +330,6 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
             {
             }
             return result;
-        }
-        private List<AssemblyInfo> GetAssemblyRebarFloor()
-        {
-            var result = new List<AssemblyInfo>();
-            try
-            {
-                var minz = FloorMinZ - 1000.MmToFoot();
-                var maxz = FloorMaxZ + 1000.MmToFoot();
-                var plg = CurveloopExt.GetPoints(OutlineReal)
-                    .Select(x => x.EditZ(minz))
-                    .ToList();
-                var solid = plg.CreateSolid(XYZ.BasisZ, (maxz - minz).FootToMm());
-
-                result = MSLabElementIntance.AssemblyRebarFloors
-                    .Where(x =>
-                    {
-                        var l = x.AssemblyCurveBoundingBox;
-                        var intersect = solid.IntersectWithCurve(l, new SolidCurveIntersectionOptions());
-                        if (intersect.SegmentCount == 0) return false;
-                        var length = 0.0;
-                        for (int i = 0; i < intersect.SegmentCount; i++)
-                        {
-                            length += intersect.GetCurveSegment(i).Length;
-                        }
-                        return length * 100 / l.Length >= 50;
-                    })
-                    .ToList();
-            }
-            catch (Exception)
-            {
-            }
-            return result;
-        }
-        private List<Grid> GetGridsAround()
-        {
-            var solidThickness = 1000;
-            var grids = new List<Grid>();
-            try
-            {
-                var isClockwise = OutlineReal.IsCounterclockwise(XYZ.BasisZ);
-                var outlineRealOffset = isClockwise
-                    ? OutlineReal.CreateOffset(2000.MmToFoot(), XYZ.BasisZ)
-                    : OutlineReal.CreateOffset(2000.MmToFoot(), -XYZ.BasisZ);
-                var ps = CurveloopExt.GetPoints(outlineRealOffset)
-                    .Select(x => x.EditZ(FloorMinZ))
-                    .ToList();
-                var solid = ps.CreateSolid(XYZ.BasisZ, solidThickness);
-
-                grids = MSLabElementIntance.Grids
-                .Where(x =>
-                {
-                    var curve = x.Curve;
-                    var l = Line.CreateBound(
-                        curve.GetEndPoint(0).EditZ(FloorMinZ + solidThickness.MmToFoot() / 2),
-                        curve.GetEndPoint(1).EditZ(FloorMinZ + solidThickness.MmToFoot() / 2));
-                    var isIntersect = solid.IntersectWithCurve(l, new SolidCurveIntersectionOptions());
-                    return isIntersect.SegmentCount > 0;
-                })
-                .ToList();
-            }
-            catch (Exception)
-            {
-            }
-            return grids;
         }
         private List<Element> GetElementsAround()
         {
@@ -409,7 +342,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
                 var outlineRealOffset = isClockwise
                     ? OutlineReal.CreateOffset(maxDev, XYZ.BasisZ)
                     : OutlineReal.CreateOffset(maxDev, -XYZ.BasisZ);
-                var ps = CurveloopExt.GetPoints(outlineRealOffset)
+                var ps = RevCurveloopUtils.GetPoints(outlineRealOffset)
                     .Select(x => x.EditZ(FloorMinZ))
                     .ToList();
                 var solid = ps.CreateSolid(XYZ.BasisZ, 50.MmToFoot());
@@ -552,7 +485,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
             Floor = floor;
             CurveLoop = curveLoop;
             Normal = curveLoop.GetNormal();
-            Points = CurveloopExt.GetPoints(curveLoop);
+            Points = RevCurveloopUtils.GetPoints(curveLoop);
         }
         public void DrawInCanvas()
         {

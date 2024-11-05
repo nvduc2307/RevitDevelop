@@ -1,8 +1,8 @@
 ﻿using Autodesk.Revit.Attributes;
 using HcBimUtils;
 using HcBimUtils.DocumentUtils;
+using HcBimUtils.GeometryUtils.Geometry;
 using Nice3point.Revit.Toolkit.External;
-using Utils.BoundingBoxs;
 
 namespace RevitDevelop.Tools.ATest
 {
@@ -12,7 +12,6 @@ namespace RevitDevelop.Tools.ATest
         public override void Execute()
         {
             AC.GetInformation(UiDocument);
-
             using (var tsg = new TransactionGroup(Document, "name transaction group"))
             {
                 tsg.Start();
@@ -20,14 +19,23 @@ namespace RevitDevelop.Tools.ATest
                 {
                     //--------
                     var obj = UiDocument.Selection.PickObject(Autodesk.Revit.UI.Selection.ObjectType.Element).ToElement();
-                    var box = new BoxElement(obj);
-                    var max = box.Curves
+                    var solids = obj.GetSolids();
+                    var curves = solids.Select(x => x.GetFacesFromSolid())
+                        .Aggregate((a, b) => a.Concat(b).ToList())
+                        .Select(x => x.GetFirstCurveLoop().ToList())
+                        .Aggregate((a, b) => a.Concat(b).ToList())
+                        .OrderBy(x => x.Length)
+                        .ToList();
+                    var vtx = curves.LastOrDefault().Direction();
+                    var vty = vtx.CrossProduct(XYZ.BasisZ);
+                    var vtz = vtx.CrossProduct(vty);
+                    var max = curves
                         .Select(x => new List<XYZ>() { x.GetEndPoint(0), x.GetEndPoint(1) })
                         .Aggregate((a, b) => a.Concat(b).ToList())
                         .ToList()
                         .OrderBy(x => x.Z)
                         .LastOrDefault();
-                    var edgeArrs = box.Solids
+                    var edgeArrs = solids
                         .Select(x => x.Edges)
                         .ToList();
                     var refArr = new ReferenceArray();
@@ -37,7 +45,7 @@ namespace RevitDevelop.Tools.ATest
                         {
                             var c = edge.AsCurve();
                             var dr = edge.AsCurve().Direction();
-                            var dk1 = box.VTX.IsParallel(dr);
+                            var dk1 = vtx.IsParallel(dr);
                             var dk2 = c.GetEndPoint(0).Z.IsAlmostEqual(max.Z) || c.GetEndPoint(1).Z.IsAlmostEqual(max.Z);
                             if (dk1 && dk2)
                             {
@@ -51,7 +59,7 @@ namespace RevitDevelop.Tools.ATest
                     {
                         ts.Start();
                         //--------
-                        var l = Line.CreateBound(max, max + box.VTY * 1000.MmToFoot());
+                        var l = Line.CreateBound(max, max + vty * 1000.MmToFoot());
                         var dim = Document.Create.NewDimension(Document.ActiveView, l, refArr);
                         //--------
                         ts.Commit();

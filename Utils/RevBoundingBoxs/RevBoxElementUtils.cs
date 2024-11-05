@@ -1,9 +1,9 @@
 ﻿using HcBimUtils;
 using HcBimUtils.DocumentUtils;
 
-namespace Utils.BoundingBoxs
+namespace Utils.RevBoundingBoxs
 {
-    public static class BoundingBoxUtils
+    public static class RevBoxElementutils
     {
         public static IEnumerable<Element> GetElementAroundBox(this BoundingBoxXYZ boundingBoxXYZ, Document document, BuiltInCategory builtInCategory)
         {

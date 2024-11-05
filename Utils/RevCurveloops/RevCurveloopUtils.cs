@@ -1,31 +1,13 @@
-﻿using HcBimUtils;
+﻿using Autodesk.Revit.DB.IFC;
+using HcBimUtils;
 using Utils.CompareElement;
 using Utils.RevArcs;
 using Utils.RevEllipses;
 
-namespace Utils.Curveloops
+namespace Utils.RevCurveloops
 {
-    public static class CurveloopExt
+    public static class RevCurveloopUtils
     {
-        public static BoundingBoxXYZ GetBoundingBoxOXY(this CurveLoop curveLoop)
-        {
-            var result = new BoundingBoxXYZ();
-            try
-            {
-                var ps = curveLoop.GetPoints();
-                var minx = ps.Min(x => x.X);
-                var miny = ps.Min(x => x.Y);
-                var maxx = ps.Max(x => x.X);
-                var maxy = ps.Max(x => x.Y);
-                result.Min = new XYZ(minx, miny, -1);
-                result.Max = new XYZ(maxx, maxy, 0);
-
-            }
-            catch (Exception)
-            {
-            }
-            return result;
-        }
         public static XYZ GetCenter(this CurveLoop curveLoop)
         {
             XYZ result = null;
@@ -118,6 +100,10 @@ namespace Utils.Curveloops
                 }
             }
             return result;
+        }
+        public static double GetArea(this CurveLoop loop)
+        {
+            return ExporterIFCUtils.ComputeAreaOfCurveLoops(new List<CurveLoop>() { loop });
         }
     }
 }

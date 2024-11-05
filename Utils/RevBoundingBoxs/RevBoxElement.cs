@@ -2,14 +2,12 @@
 using HcBimUtils;
 using HcBimUtils.DocumentUtils;
 using HcBimUtils.GeometryUtils.Geometry;
+using RevitDevelop.Utils.RevBoundingBoxs;
 using Utils.Geometries;
 
 namespace Utils.BoundingBoxs
 {
-    public class BoxElementUtils
-    {
-    }
-    public class BoxElement
+    public class RevBoxElement
     {
         public int Id { get; }
         public XYZ VTX { get; }
@@ -20,8 +18,8 @@ namespace Utils.BoundingBoxs
         public List<Curve> Curves { get; }
         public Outline Outline { get; set; }
         public Line LineBox { get; private set; }
-        public BoxElementPoint BoxElementPoint { get; private set; }
-        public BoxElement(Element ele)
+        public RevBoxPoint BoxElementPoint { get; private set; }
+        public RevBoxElement(Element ele)
         {
             Element = ele;
             Id = int.Parse(Element.Id.ToString());
@@ -30,7 +28,7 @@ namespace Utils.BoundingBoxs
             VTX = GetVTX();
             VTY = !VTX.IsParallel(XYZ.BasisZ) ? VTX.CrossProduct(XYZ.BasisZ).Normalize() : VTX.CrossProduct(XYZ.BasisX).Normalize();
             VTZ = VTX.CrossProduct(VTY).Normalize();
-            Outline = GetOutLine(out BoxElementPoint boxElementPoint, out Line lineBox);
+            Outline = GetOutLine(out RevBoxPoint boxElementPoint, out Line lineBox);
             BoxElementPoint = boxElementPoint;
             LineBox = lineBox;
         }
@@ -48,10 +46,10 @@ namespace Utils.BoundingBoxs
             }
             return reuslts;
         }
-        private Outline GetOutLine(out BoxElementPoint boxElementPoint, out Line lineBox)
+        private Outline GetOutLine(out RevBoxPoint boxElementPoint, out Line lineBox)
         {
             lineBox = null;
-            boxElementPoint = new BoxElementPoint();
+            boxElementPoint = new RevBoxPoint();
             try
             {
                 var ps = Curves
@@ -176,16 +174,5 @@ namespace Utils.BoundingBoxs
             }
             return result;
         }
-    }
-    public class BoxElementPoint
-    {
-        public XYZ P1 { get; set; }
-        public XYZ P2 { get; set; }
-        public XYZ P3 { get; set; }
-        public XYZ P4 { get; set; }
-        public XYZ P5 { get; set; }
-        public XYZ P6 { get; set; }
-        public XYZ P7 { get; set; }
-        public XYZ P8 { get; set; }
     }
 }

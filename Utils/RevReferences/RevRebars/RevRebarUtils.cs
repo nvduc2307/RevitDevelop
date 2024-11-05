@@ -1,7 +1,7 @@
 ﻿using Autodesk.Revit.DB.Structure;
 using Utils.CompareElement;
 
-namespace RevitDevelop.Utils.RevRebars
+namespace RevitDevelop.Utils.RevReferences.RevRebars
 {
     public static class RevRebarUtils
     {

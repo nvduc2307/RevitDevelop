@@ -3,11 +3,12 @@ using HcBimUtils.DocumentUtils;
 using Newtonsoft.Json;
 using RevitDevelop.Tools.Rebars.SettingRuleRebarStandards.models;
 using RevitDevelop.Utils.NumberingRevitElements;
-using Utils.Assemblies;
+using RevitDevelop.Utils.RevAssemblies;
 using Utils.canvass;
 using Utils.Entities;
 using Utils.FilterElements;
 using Utils.RebarInRevits.Models;
+using Utils.RevAssemblies;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
 {
@@ -20,7 +21,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
         public List<ViewFamilyType> ViewFamilyTypes { get; }
         public List<Grid> Grids { get; }
         public List<AssemblyInstance> AssemblyRebars { get; }
-        public List<AssemblyInfo> AssemblyRebarFloors { get; }
+        public List<RevAssembly> AssemblyRebarFloors { get; }
         public List<RebarBarTypeCustom> RebarBarTypes { get; }
         public RebarBarTypeCustom RebarBarTypeSelected
         {
@@ -53,9 +54,8 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
                 .ToList();
             Grids = AC.Document.GetElementsFromClass<Grid>(false);
             AssemblyRebars = AC.Document.GetElementsFromClass<AssemblyInstance>(false)
-                .Where(x => AssemblyInfo.GetAssemblyType(AC.Document, x) == AssemblyType1.Rebar)
+                .Where(x => RevAssemblyUtils.GetAssemblyType(AC.Document, x) == RevAssemblyType.Rebar)
                 .ToList();
-            AssemblyRebarFloors = GetAssemblyRebarFloors();
             RebarBarTypes = AC.Document.GetElementsFromClass<RebarBarType>()
                 .Select(x => new RebarBarTypeCustom(x))
                 .OrderBy(x => x.NameStyle)
@@ -83,16 +83,6 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
                 OptionNumberingTypeRebar.StartThread,
                 OptionNumberingTypeRebar.EndThread,
             };
-        }
-        private List<AssemblyInfo> GetAssemblyRebarFloors()
-        {
-            return AssemblyInfo.GetRebarAssemblyInstanceFormRebarHostCategory(
-                AC.Document,
-                AssemblyRebars,
-                RebarHostCategory.Floor,
-                out List<Rebar> rebarFalseHost)
-                .Select(x => new AssemblyInfo(AC.UiDoc, x))
-                .ToList();
         }
         public static void MSlabRebarLayerUiSelectedEventActionF(List<MSlab> mSlabs, MSlabRebarLayerType mSlabRebarLayerType, CanvasPageBase canvasPageBase, XYZ rCenter, InstallRebarSlabModel installRebarSlabModel)
         {

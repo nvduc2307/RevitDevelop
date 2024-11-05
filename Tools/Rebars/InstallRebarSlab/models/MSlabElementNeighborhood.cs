@@ -1,8 +1,8 @@
 ﻿using HcBimUtils;
 using HcBimUtils.GeometryUtils.Geometry;
 using HcBimUtils.MoreLinq;
-using RevitDevelop.Utils.Floors;
 using Utils.CompareElement;
+using Utils.RevCurveloops;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
 {
@@ -43,8 +43,8 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarSlab.models
 
                 MainCurveLoop = AllCurveLoops.LastOrDefault();
                 Openings = GetOpenings();
-                Points = AllCurveLoops.Select(x => x.GetPoints()).Aggregate((a, b) => a.Concat(b).ToList());
-                PointsOnFloorPlan = MainCurveLoop.GetPoints()
+                Points = AllCurveLoops.Select(x => RevCurveloopUtils.GetPoints(x)).Aggregate((a, b) => a.Concat(b).ToList());
+                PointsOnFloorPlan = RevCurveloopUtils.GetPoints(MainCurveLoop)
                     .Select(x => x.EditZ(0))
                     .Distinct(new ComparePoint())
                     .ToList();
