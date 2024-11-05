@@ -30,24 +30,27 @@ namespace Utils.BoundingBoxs
             VTX = GetVTX();
             VTY = !VTX.IsParallel(XYZ.BasisZ) ? VTX.CrossProduct(XYZ.BasisZ).Normalize() : VTX.CrossProduct(XYZ.BasisX).Normalize();
             VTZ = VTX.CrossProduct(VTY).Normalize();
-            Outline = GetOutLine(out BoxElementPoint boxElementPoint);
-            LineBox = Outline != null ? Line.CreateBound(Outline.MinimumPoint, Outline.MaximumPoint) : null;
+            Outline = GetOutLine(out BoxElementPoint boxElementPoint, out Line lineBox);
             BoxElementPoint = boxElementPoint;
+            LineBox = lineBox;
         }
         private List<Solid> GetSolids()
         {
             var reuslts = new List<Solid>();
             try
             {
-                reuslts = Element.GetSolids().Where(x => x != null).Where(x => x.Volume > 0).ToList();
+                reuslts = Element.GetSolids()
+                    .Where(x => x != null)
+                    .Where(x => x.Volume > 0).ToList();
             }
             catch (Exception)
             {
             }
             return reuslts;
         }
-        private Outline GetOutLine(out BoxElementPoint boxElementPoint)
+        private Outline GetOutLine(out BoxElementPoint boxElementPoint, out Line lineBox)
         {
+            lineBox = null;
             boxElementPoint = new BoxElementPoint();
             try
             {
@@ -94,6 +97,7 @@ namespace Utils.BoundingBoxs
                 boxElementPoint.P6 = pt2;
                 boxElementPoint.P7 = pt3;
                 boxElementPoint.P8 = pt4;
+                lineBox = Line.CreateBound(pb1, pt3);
 
                 return new Outline(pb1, pt3);
             }
@@ -141,12 +145,11 @@ namespace Utils.BoundingBoxs
             {
                 try
                 {
-                    var crs = ele.GetAllSolids()
+                    var crs = Solids
                         .Select(x => x.GetFacesFromSolid())
                         .Aggregate((a, b) => a.Concat(b).ToList())
-                        .Select(x => x.GetEdgesAsCurveLoops().ToList())
-                        .Aggregate((a, b) => a.Concat(b).ToList())
-                        .Select(x => x.ToList())
+                        .Select(x => x.GetFirstCurveLoop().ToList())
+                        .Select(x => x)
                         .Aggregate((a, b) => a.Concat(b).ToList());
                     results.AddRange(crs);
                 }

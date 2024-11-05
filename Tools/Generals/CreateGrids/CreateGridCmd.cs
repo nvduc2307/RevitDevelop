@@ -20,7 +20,8 @@ namespace RevitDevelop.Tools.Generals.CreateGrids
                     var vm = new CreateGridsModelViews();
                     vm.MainView.ShowDialog();
                     //--------
-                    tsg.Assimilate();
+                    if (vm.IsComplete) tsg.Assimilate();
+                    else tsg.RollBack();
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException) { }
                 catch (Exception)

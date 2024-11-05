@@ -57,17 +57,17 @@ namespace RevitDevelop.Tools.Generals.CreateGrids.models
                 .FirstOrDefault()
                 .Select(x => new RevGrid(x))
                 .ToList()
-                : new List<RevGrid>();
+                : [];
             GridYs = _elementInstances.Grids.Count != 0
                 ? _elementInstances.Grids
                 .LastOrDefault()
                 .Select(x => new RevGrid(x))
                 .ToList()
                 : [];
-            GridXNames = GridXs.Count != 0 ? GridXs.Select(x => x.Name).Aggregate((a, b) => $"{a} {b}") : "";
-            GridYNames = GridXs.Count != 0 ? GridYs.Select(x => x.Name).Aggregate((a, b) => $"{a} {b}") : "";
-            GridXValues = GetGridValues(GridXs);
-            GridYValues = GetGridValues(GridYs);
+            GridXNames = GridXs.Any() ? GridXs.Select(x => x.Name).Aggregate((a, b) => $"{a} {b}") : "X1 X2";
+            GridYNames = GridYs.Any() ? GridYs.Select(x => x.Name).Aggregate((a, b) => $"{a} {b}") : "Y1 Y2";
+            GridXValues = GetGridValues(GridXs) ?? "0 1000";
+            GridYValues = GetGridValues(GridYs) ?? "0 1000";
         }
         private static string GetGridValues(List<RevGrid> grids)
         {
@@ -87,7 +87,7 @@ namespace RevitDevelop.Tools.Generals.CreateGrids.models
             catch (Exception)
             {
             }
-            return result;
+            return string.IsNullOrEmpty(result) ? null : result;
         }
     }
 }

@@ -3,6 +3,7 @@ using HcBimUtils.DocumentUtils;
 using RevitDevelop.Tools.Generals.CreateGrids.exceptions;
 using RevitDevelop.Tools.Generals.CreateGrids.models;
 using RevitDevelop.Tools.Generals.CreateGrids.views;
+using System.Windows;
 using Utils.Messages;
 using Utils.NumberUtils;
 
@@ -10,6 +11,7 @@ namespace RevitDevelop.Tools.Generals.CreateGrids.modelViews
 {
     public partial class CreateGridsModelViews : ObservableObject
     {
+        public bool IsComplete { get; set; }
         public ElementInstances ElementInstances { get; set; }
         public CreateGridsModel CreateGridsModel { get; set; }
         public CreateGridView MainView { get; set; }
@@ -20,7 +22,7 @@ namespace RevitDevelop.Tools.Generals.CreateGrids.modelViews
             MainView = new CreateGridView() { DataContext = this };
         }
         [RelayCommand]
-        private void CreateGridOK()
+        private void CreateGridOK(object obj)
         {
             try
             {
@@ -50,6 +52,7 @@ namespace RevitDevelop.Tools.Generals.CreateGrids.modelViews
                 var cy = 0;
                 var axR = 0.0;
                 var ayR = 0.0;
+                var extent = 1000.MmToFoot();
                 var coordinate = new XYZ();
                 var lengthGX = gridXValues.Select(x => double.Parse(x, System.Globalization.NumberStyles.Number)).Sum();
                 var lengthGY = gridYValues.Select(x => double.Parse(x, System.Globalization.NumberStyles.Number)).Sum();
@@ -58,12 +61,14 @@ namespace RevitDevelop.Tools.Generals.CreateGrids.modelViews
                 {
                     ts.Start();
                     //--------
-                    AC.Document.Delete(ElementInstances.Grids.Aggregate((a, b) => a.Concat(b).ToList()).Select(x => x.Id).ToList());
+                    if (ElementInstances.Grids.Count != 0)
+                        AC.Document.Delete(ElementInstances.Grids.Aggregate((a, b) => a.Concat(b).ToList()).Select(x => x.Id).ToList());
+
                     foreach (var gx in gridXNames)
                     {
                         axR += double.Parse(gridXValues[cx], System.Globalization.NumberStyles.Number);
-                        var p1 = coordinate + XYZ.BasisX * axR.MmToFoot();
-                        var p2 = p1 + XYZ.BasisY * lengthGY.MmToFoot();
+                        var p1 = coordinate + XYZ.BasisX * axR.MmToFoot() - XYZ.BasisY * extent;
+                        var p2 = coordinate + XYZ.BasisX * axR.MmToFoot() + XYZ.BasisY * lengthGY.MmToFoot() + XYZ.BasisY * extent;
                         var gr = Grid.Create(AC.Document, Line.CreateBound(p1, p2));
                         gr.Name = gx;
                         cx++;
@@ -71,8 +76,8 @@ namespace RevitDevelop.Tools.Generals.CreateGrids.modelViews
                     foreach (var gy in gridYNames)
                     {
                         ayR += double.Parse(gridYValues[cy], System.Globalization.NumberStyles.Number);
-                        var p1 = coordinate + XYZ.BasisY * ayR.MmToFoot();
-                        var p2 = p1 + XYZ.BasisX * lengthGX.MmToFoot();
+                        var p1 = coordinate + XYZ.BasisY * ayR.MmToFoot() - XYZ.BasisX * extent;
+                        var p2 = coordinate + XYZ.BasisY * ayR.MmToFoot() + XYZ.BasisX * lengthGX.MmToFoot() + XYZ.BasisX * extent;
                         var gr = Grid.Create(AC.Document, Line.CreateBound(p1, p2));
                         gr.Name = gy;
                         cy++;
@@ -80,11 +85,19 @@ namespace RevitDevelop.Tools.Generals.CreateGrids.modelViews
                     //--------
                     ts.Commit();
                 }
+                IsComplete = true;
             }
             catch (Exception ex)
             {
                 IO.ShowWarning(ex.Message);
+                IsComplete = false;
             }
+            if (obj is Window window) window.Close();
+        }
+        [RelayCommand]
+        private void CreateGridCancel(object obj)
+        {
+            if (obj is Window window) window.Close();
         }
     }
 }
