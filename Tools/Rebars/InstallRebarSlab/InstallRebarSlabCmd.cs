@@ -1,41 +1,12 @@
-﻿using Autodesk.Revit.Attributes;
-using HcBimUtils.DocumentUtils;
-using Nice3point.Revit.Toolkit.External;
-using RevitDevelop.InstallRebarSlab.viewModels;
-using RevitDevelop.Tools.Rebars.InstallRebarSlab.models;
-using Utils.SelectionFilterInRevit;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarSlab
 {
-    [Transaction(TransactionMode.Manual)]
-    public class InstallRebarSlabCmd : ExternalCommand
+    internal class InstallRebarSlabCmd
     {
-        public override void Execute()
-        {
-            AC.GetInformation(UiDocument);
-            using (var tsg = new TransactionGroup(Document, "name transaction group"))
-            {
-                tsg.Start();
-                try
-                {
-                    //--------
-                    var mSLabElementIntance = new MSLabElementIntance();
-                    var floors = UiDocument.Selection
-                        .PickObjects(Autodesk.Revit.UI.Selection.ObjectType.Element, new GenericSelectionFilter(BuiltInCategory.OST_Floors))
-                        .Select(x => Document.GetElement(x) as Floor)
-                        .Select(x => new MSlab(x, mSLabElementIntance))
-                        .ToList();
-                    var viewModel = new InstallRebarSlabViewModel(mSLabElementIntance, floors);
-                    viewModel.MainView.ShowDialog();
-                    //--------
-                    tsg.Assimilate();
-                }
-                catch (Autodesk.Revit.Exceptions.OperationCanceledException) { }
-                catch (Exception)
-                {
-                    tsg.RollBack();
-                }
-            }
-        }
     }
 }

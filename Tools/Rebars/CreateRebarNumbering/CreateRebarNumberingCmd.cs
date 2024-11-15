@@ -3,7 +3,8 @@ using Autodesk.Revit.DB.Structure;
 using HcBimUtils.DocumentUtils;
 using Newtonsoft.Json;
 using Nice3point.Revit.Toolkit.External;
-using RevitDevelop.Utils.NumberingRevitElements;
+using RevitDevelop.Utils.RevElementNumberings;
+using RevitDevelop.Utils.RevElements.RevRebars;
 using System.Diagnostics;
 using Utils.Entities;
 using Utils.FilterElements;
@@ -27,27 +28,27 @@ namespace RevitDevelop.Tools.Rebars.CreateRebarNumbering
                     w.Start();
                     var schemaRebarNumberingInfo = new SchemaInfo(SCHEMAL_INFO_NUMBERING_REBAR, REBAR_POSITION_NUMBER_INFO, new SchemaField());
                     //--------
-                    var optionsNumbering = new List<OptionNumberingTypeRebar>() {
-                        OptionNumberingTypeRebar.Prefix,
-                        OptionNumberingTypeRebar.GroupElevation,
-                        OptionNumberingTypeRebar.Zone,
-                        OptionNumberingTypeRebar.Length,
-                        OptionNumberingTypeRebar.Diameter,
-                        OptionNumberingTypeRebar.RebarShape,
-                        OptionNumberingTypeRebar.StartThread,
-                        OptionNumberingTypeRebar.EndThread,
+                    var optionsNumbering = new List<OptionRebarNumbering>() {
+                        OptionRebarNumbering.Prefix,
+                        OptionRebarNumbering.GroupElevation,
+                        OptionRebarNumbering.Zone,
+                        OptionRebarNumbering.Length,
+                        OptionRebarNumbering.Diameter,
+                        OptionRebarNumbering.RebarShape,
+                        OptionRebarNumbering.StartThread,
+                        OptionRebarNumbering.EndThread,
                     };
 
                     var rebars = Document.GetElementsFromClass<Rebar>(false);
                     var rebarInfos = rebars
                         .Select(x => SchemaInfo.Read(schemaRebarNumberingInfo.SchemaBase, x, schemaRebarNumberingInfo.SchemaField.Name))
-                        .Select(x => JsonConvert.DeserializeObject<NumberingRevitRebar>(x))
+                        .Select(x => JsonConvert.DeserializeObject<RevRebar>(x))
                         .ToList();
                     using (var ts = new Transaction(Document, "name transaction"))
                     {
                         ts.Start();
                         //--------
-                        NumberingRevitRebar.Numbering(rebarInfos, optionsNumbering, schemaRebarNumberingInfo);
+                        RevRebarUtils.Numbering(rebarInfos, optionsNumbering, schemaRebarNumberingInfo);
                         //--------
                         ts.Commit();
                     }

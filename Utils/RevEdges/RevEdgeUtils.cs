@@ -2,7 +2,7 @@
 {
     public static class RevEdgeUtils
     {
-        public static List<Edge> GetEdges(Solid solid)
+        public static List<Edge> GetEdges(this Solid solid)
         {
             var result = new List<Edge>();
             foreach (Edge edge in solid.Edges)

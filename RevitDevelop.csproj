@@ -42,16 +42,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Tools\Rebars\SettingRuleRebarStandards\datas\SettingRuleRebarStandardsData.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="Tools\Rebars\SettingRuleRebarStandards\datas\SettingRuleRebarStandardsData.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Chuongmep.Acad.Api.accoremgd" Version="2024.0.1" />
         <PackageReference Include="Chuongmep.Acad.Api.AcCui" Version="2024.0.1" />
         <PackageReference Include="Chuongmep.Acad.Api.acdbmgd" Version="2024.0.1" />
@@ -75,10 +65,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Tools\Rebars\InstallRebarBeam\images\" />
-      <Folder Include="Tools\Rebars\InstallRebarBeam\iservices\" />
-      <Folder Include="Tools\Rebars\InstallRebarBeam\services\" />
-      <Folder Include="Tools\Rebars\InstallRebarBeam\utils\" />
+      <Folder Include="Tools\Rebars\InstallRebarBeamV2\views\" />
+      <Folder Include="Tools\Rebars\SettingRuleRebarStandards\" />
       <Folder Include="Tools\Schedules\CreateRebarSchedule\" />
       <Folder Include="Tools\Concretes\" />
       <Folder Include="Tools\Schedules\" />

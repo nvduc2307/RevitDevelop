@@ -1,14 +1,16 @@
 ﻿using Autodesk.Revit.Attributes;
-using HcBimUtils;
 using HcBimUtils.DocumentUtils;
-using HcBimUtils.GeometryUtils.Geometry;
 using Nice3point.Revit.Toolkit.External;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace RevitDevelop.Tools.ATest
 {
     [Transaction(TransactionMode.Manual)]
     public class ATestCmd : ExternalCommand
     {
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
         public override void Execute()
         {
             AC.GetInformation(UiDocument);
@@ -18,51 +20,17 @@ namespace RevitDevelop.Tools.ATest
                 try
                 {
                     //--------
-                    var obj = UiDocument.Selection.PickObject(Autodesk.Revit.UI.Selection.ObjectType.Element).ToElement();
-                    var solids = obj.GetSolids();
-                    var curves = solids.Select(x => x.GetFacesFromSolid())
-                        .Aggregate((a, b) => a.Concat(b).ToList())
-                        .Select(x => x.GetFirstCurveLoop().ToList())
-                        .Aggregate((a, b) => a.Concat(b).ToList())
-                        .OrderBy(x => x.Length)
-                        .ToList();
-                    var vtx = curves.LastOrDefault().Direction();
-                    var vty = vtx.CrossProduct(XYZ.BasisZ);
-                    var vtz = vtx.CrossProduct(vty);
-                    var max = curves
-                        .Select(x => new List<XYZ>() { x.GetEndPoint(0), x.GetEndPoint(1) })
-                        .Aggregate((a, b) => a.Concat(b).ToList())
-                        .ToList()
-                        .OrderBy(x => x.Z)
-                        .LastOrDefault();
-                    var edgeArrs = solids
-                        .Select(x => x.Edges)
-                        .ToList();
-                    var refArr = new ReferenceArray();
-                    foreach (var edgeArr in edgeArrs)
+                    Process[] processlist = Process.GetProcesses();
+                    foreach (Process process in processlist)
                     {
-                        foreach (Edge edge in edgeArr)
+                        if (!String.IsNullOrEmpty(process.MainWindowTitle))
                         {
-                            var c = edge.AsCurve();
-                            var dr = edge.AsCurve().Direction();
-                            var dk1 = vtx.IsParallel(dr);
-                            var dk2 = c.GetEndPoint(0).Z.IsAlmostEqual(max.Z) || c.GetEndPoint(1).Z.IsAlmostEqual(max.Z);
-                            if (dk1 && dk2)
+                            //Debug.WriteLine(process.MainWindowTitle);
+                            if (process.MainWindowTitle.Contains("Notepad"))
                             {
-                                var content = obj.UniqueId + ":0:INSTANCE:" + edge.Reference.ConvertToStableRepresentation(Document);
-                                refArr.Append(Reference.ParseFromStableRepresentation(Document, content));
+                                ShowWindow(process.MainWindowHandle, 3);
                             }
                         }
-                    }
-
-                    using (var ts = new Transaction(Document, "name transaction"))
-                    {
-                        ts.Start();
-                        //--------
-                        var l = Line.CreateBound(max, max + vty * 1000.MmToFoot());
-                        var dim = Document.Create.NewDimension(Document.ActiveView, l, refArr);
-                        //--------
-                        ts.Commit();
                     }
                     //--------
                     tsg.Assimilate();

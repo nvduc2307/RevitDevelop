@@ -1,7 +1,7 @@
 ﻿using Autodesk.Revit.DB.Structure;
 using HcBimUtils;
 using HcBimUtils.DocumentUtils;
-using RevitDevelop.Utils.NumberingRevitElements;
+using RevitDevelop.Utils.RevElements.RevRebars;
 using RevitDevelop.Utils.RevReferences.RevRebars;
 using System.Drawing;
 using Utils.canvass;
@@ -21,7 +21,7 @@ namespace RevitDevelop.Utils.BitMaps
         System.Drawing.Imaging.ImageFormat ImageFormat { get; set; }
         public double ScaleX { get; set; }
         public double ScaleY { get; set; }
-        public NumberingRevitRebar NumberingRevitRebar { get; set; }
+        public RevRebar RevRebar { get; set; }
         public Rebar Rebar { get; set; }
         public XYZ VTX { get; set; }
         public XYZ VTY { get; set; }
@@ -32,10 +32,10 @@ namespace RevitDevelop.Utils.BitMaps
         public List<Curve> CurvesOrgin { get; set; } //doi voi cac thanh thep khep kin thi cac line co the khac mat phang
         public List<Curve> CurvesGenerate { get; set; } // xoay truc z, xoay truc x, move ve goc toa do
         public Line Axis { get; set; }
-        public RebarCustomImage(int id, NumberingRevitRebar numberingRevitRebar)
+        public RebarCustomImage(int id, RevRebar revRebar)
         {
-            Id = numberingRevitRebar.ElementId;
-            NumberingRevitRebar = numberingRevitRebar;
+            Id = revRebar.ElementId;
+            RevRebar = revRebar;
             Rebar = new Autodesk.Revit.DB.ElementId(Id).ToElement(AC.Document) as Rebar;
             Name = ParameterUtilities.HasParameter(Rebar, "RebarScheduleShareParameter.SCHEDULE_REBAR_MARK")
                 ? Rebar.LookupParameter("RebarScheduleShareParameter.SCHEDULE_REBAR_MARK").AsString()

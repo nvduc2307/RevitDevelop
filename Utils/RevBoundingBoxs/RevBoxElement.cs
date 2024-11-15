@@ -34,17 +34,21 @@ namespace Utils.BoundingBoxs
         }
         private List<Solid> GetSolids()
         {
-            var reuslts = new List<Solid>();
+            var result = new List<Solid>();
             try
             {
-                reuslts = Element.GetSolids()
-                    .Where(x => x != null)
-                    .Where(x => x.Volume > 0).ToList();
+                if (Element is FamilyInstance f)
+                {
+                    //result = new List<Solid>() { f.GetSolidOriginalFromFamilyInstance() };
+                    result = Element.GetSolids()
+                        .Where(x => x != null)
+                        .Where(x => x.Volume > 0).ToList();
+                }
             }
             catch (Exception)
             {
             }
-            return reuslts;
+            return result;
         }
         private Outline GetOutLine(out RevBoxPoint boxElementPoint, out Line lineBox)
         {
@@ -143,7 +147,7 @@ namespace Utils.BoundingBoxs
             {
                 try
                 {
-                    var crs = Solids
+                    var crs = ele.GetSolids()
                         .Select(x => x.GetFacesFromSolid())
                         .Aggregate((a, b) => a.Concat(b).ToList())
                         .Select(x => x.GetFirstCurveLoop().ToList())
