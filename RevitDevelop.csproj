@@ -65,7 +65,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Tools\Rebars\InstallRebarBeamV2\views\" />
       <Folder Include="Tools\Rebars\SettingRuleRebarStandards\" />
       <Folder Include="Tools\Schedules\CreateRebarSchedule\" />
       <Folder Include="Tools\Concretes\" />

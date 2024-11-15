@@ -18,6 +18,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2
                 {
                     //--------
                     var vm = new InstallRebarBeamV2ViewModel();
+                    vm.MainView.ShowDialog();
                     //--------
                     tsg.Assimilate();
                 }

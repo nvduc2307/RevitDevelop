@@ -4,8 +4,8 @@
     {
         Beam,
         Column,
-        Wall,
         Foundation,
+        Wall,
         Floor,
         Assembly
     }
