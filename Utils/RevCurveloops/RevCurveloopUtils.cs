@@ -61,7 +61,6 @@ namespace Utils.RevCurveloops
                 return loop;
             }
         }
-
         public static List<XYZ> GetPoints(this CurveLoop curves)
         {
             List<XYZ> list = new List<XYZ>();
