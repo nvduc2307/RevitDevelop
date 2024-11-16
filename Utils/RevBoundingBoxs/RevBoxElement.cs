@@ -10,9 +10,9 @@ namespace Utils.BoundingBoxs
     public class RevBoxElement
     {
         public int Id { get; }
-        public XYZ VTX { get; }
-        public XYZ VTY { get; }
-        public XYZ VTZ { get; }
+        public XYZ VTX { get; set; }
+        public XYZ VTY { get; set; }
+        public XYZ VTZ { get; set; }
         public Element Element { get; }
         public List<Solid> Solids { get; }
         public List<Curve> Curves { get; }
@@ -31,6 +31,28 @@ namespace Utils.BoundingBoxs
             Outline = GetOutLine(out RevBoxPoint boxElementPoint, out Line lineBox);
             BoxElementPoint = boxElementPoint;
             LineBox = lineBox;
+        }
+        public void GenerateCoordinateWithBaseVT(XYZ vtBase)
+        {
+            if(VTX.IsParallel(vtBase))
+            {
+                var vttg = VTZ;
+                VTZ = vtBase;
+                VTX = vttg;
+                VTY = VTX.CrossProduct(VTZ);
+            }
+            if (VTY.IsParallel(vtBase))
+            {
+                var vttg = VTZ;
+                VTZ = vtBase;
+                VTY = vttg;
+                VTX = VTY.CrossProduct(VTZ);
+            }
+            if (VTZ.IsParallel(vtBase))
+            {
+                VTZ = vtBase;
+                VTY = VTX.CrossProduct(VTZ);
+            }
         }
         private List<Solid> GetSolids()
         {
