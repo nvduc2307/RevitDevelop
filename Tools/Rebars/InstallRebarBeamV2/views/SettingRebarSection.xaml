@@ -140,7 +140,7 @@
                             </Grid>
                         </StackPanel>
                     </GroupBox>
-                    <Canvas Background="AliceBlue" Height="150"/>
+                    <Canvas x:Name="CanvasSectionStart" Background="AliceBlue" Height="150"/>
                 </StackPanel>
             </GroupBox>
             <GroupBox 
@@ -246,7 +246,7 @@
                             </Grid>
                         </StackPanel>
                     </GroupBox>
-                    <Canvas Background="AliceBlue" Height="150"/>
+                    <Canvas x:Name="CanvasSectionMid" Background="AliceBlue" Height="150"/>
                 </StackPanel>
             </GroupBox>
             <GroupBox 
@@ -352,7 +352,7 @@
                             </Grid>
                         </StackPanel>
                     </GroupBox>
-                    <Canvas Background="AliceBlue" Height="150"/>
+                    <Canvas x:Name="CanvasSectionEnd" Background="AliceBlue" Height="150"/>
                 </StackPanel>
             </GroupBox>
         </Grid>
