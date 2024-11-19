@@ -1,6 +1,9 @@
 ﻿using Autodesk.Revit.Attributes;
 using HcBimUtils.DocumentUtils;
+using Microsoft.Extensions.DependencyInjection;
 using Nice3point.Revit.Toolkit.External;
+using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
+using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2
@@ -17,8 +20,14 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2
                 try
                 {
                     //--------
-                    var vm = new InstallRebarBeamV2ViewModel();
-                    vm.MainView.ShowDialog();
+                    var service = new ServiceCollection();
+                    service.AddSingleton<InstallRebarBeamV2Cmd, InstallRebarBeamV2Cmd>();
+                    service.AddSingleton<IDrawRebarBeamInCanvas, DrawRebarBeamInCanvas>();
+                    service.AddSingleton<InstallRebarBeamV2ViewModel, InstallRebarBeamV2ViewModel>();
+                    var provider = service.BuildServiceProvider();
+                    var iDrawRebarBeamInCanvas = provider.GetService<IDrawRebarBeamInCanvas>();
+                    var installRebarBeamV2ViewModel = provider.GetService<InstallRebarBeamV2ViewModel>();
+                    installRebarBeamV2ViewModel.MainView.ShowDialog();
                     //--------
                     tsg.Assimilate();
                 }
