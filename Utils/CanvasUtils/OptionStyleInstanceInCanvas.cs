@@ -6,7 +6,7 @@ namespace Utils.canvass
     {
         public static OptionStyleInstanceInCanvas OPTION_CONCRETE_STRUCTURE =
             new OptionStyleInstanceInCanvas(
-                StyleThicknessInCanvas.Thickness_0dot2,
+                StyleThicknessInCanvas.Thickness_1,
                 StyleDashInCanvas.Style_Solid,
                 StyleColorInCanvas.Color_Concrete_OutLine,
                 StyleColorInCanvas.Color_Concrete);
@@ -31,6 +31,12 @@ namespace Utils.canvass
                 StyleDashInCanvas.Style_Solid,
                 StyleColorInCanvas.Color_Rebar,
                 StyleColorInCanvas.Color_Rebar);
+        public static OptionStyleInstanceInCanvas OPTION_REBAR_LINE =
+             new OptionStyleInstanceInCanvas(
+                StyleThicknessInCanvas.Thickness_2,
+                StyleDashInCanvas.Style_Solid,
+                StyleColorInCanvas.Color_Rebar,
+                null);
 
         public static OptionStyleInstanceInCanvas OPTION_GRID =
              new OptionStyleInstanceInCanvas(

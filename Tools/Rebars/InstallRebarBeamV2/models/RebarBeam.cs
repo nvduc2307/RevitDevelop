@@ -1,8 +1,6 @@
 ﻿using HcBimUtils;
 using Utils.BoundingBoxs;
-using Utils.CompareElement;
 using Utils.Geometries;
-using Utils.RevPoints;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
 {
@@ -22,6 +20,10 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             BeamWidthMm = GetBeamWidthMm(revBoxBeam, out double beamHeightMm);
             BeamHeightMm = beamHeightMm;
         }
+        public RebarBeam()
+        {
+
+        }
         private double GetBeamWidthMm(RevBoxElement revBoxBeam, out double beamHeightMm)
         {
             var result = 0.0;
@@ -29,24 +31,21 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             try
             {
                 var face = new FaceCustom(revBoxBeam.VTX, revBoxBeam.LineBox.Midpoint());
-                var ps = new List<XYZ>() {
-                    revBoxBeam.BoxElementPoint.P1,
-                    revBoxBeam.BoxElementPoint.P2,
-                    revBoxBeam.BoxElementPoint.P3,
-                    revBoxBeam.BoxElementPoint.P4,
-                    revBoxBeam.BoxElementPoint.P5,
-                    revBoxBeam.BoxElementPoint.P6,
-                    revBoxBeam.BoxElementPoint.P7,
-                    revBoxBeam.BoxElementPoint.P8,
-                };
-                var psf = ps
-                    .Select(x => x.RayPointToFace(revBoxBeam.VTX, face))
-                    .Distinct(new ComparePoint())
-                    .ToList();
-                if (psf.Count != 4) throw new Exception();
-                var curves = psf.PointsToCurves();
-                result = curves.Max(x => x.Length).FootToMm();
-                beamHeightMm = curves.Min(x => x.Length).FootToMm();
+                var faceOXY = new FaceCustom(revBoxBeam.VTZ, revBoxBeam.LineBox.Midpoint());
+                var faceOXZ = new FaceCustom(revBoxBeam.VTY, revBoxBeam.LineBox.Midpoint());
+                var faceOYZ = new FaceCustom(revBoxBeam.VTX, revBoxBeam.LineBox.Midpoint());
+
+                var p1OYZ = revBoxBeam.LineBox.GetEndPoint(0).RayPointToFace(revBoxBeam.VTX, faceOYZ);
+                var p2OYZ = revBoxBeam.LineBox.GetEndPoint(1).RayPointToFace(revBoxBeam.VTX, faceOYZ);
+
+                var p1OXZ = p1OYZ.RayPointToFace(revBoxBeam.VTY, faceOXZ);
+                var p2OXZ = p2OYZ.RayPointToFace(revBoxBeam.VTY, faceOXZ);
+
+                var p1OXY = p1OYZ.RayPointToFace(revBoxBeam.VTZ, faceOXY);
+                var p2OXY = p2OYZ.RayPointToFace(revBoxBeam.VTZ, faceOXY);
+
+                result = Math.Round(p1OXY.Distance(p2OXY).FootToMm(), 0);
+                beamHeightMm = Math.Round(p1OXZ.Distance(p2OXZ).FootToMm(), 0);
             }
             catch (Exception)
             {
