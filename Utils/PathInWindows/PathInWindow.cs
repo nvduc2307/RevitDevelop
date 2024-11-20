@@ -22,5 +22,16 @@ namespace Utils.PathInWindows
                 return Path.GetDirectoryName(path);
             }
         }
+        public static string AppDataRimT
+        {
+            get => $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\RIMT";
+        }
+        public static string AppDataDirectory
+        {
+            get
+            {
+                return $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\";
+            }
+        }
     }
 }

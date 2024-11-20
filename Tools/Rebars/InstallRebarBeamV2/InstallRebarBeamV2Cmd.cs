@@ -23,7 +23,8 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2
                     var service = new ServiceCollection();
                     service.AddSingleton<InstallRebarBeamV2Cmd, InstallRebarBeamV2Cmd>();
                     service.AddSingleton<InstallRebarBeamV2ViewModel, InstallRebarBeamV2ViewModel>();
-                    service.AddSingleton<IDrawRebarBeamInCanvas, DrawRebarBeamInCanvas>();
+                    service.AddSingleton<IDrawRebarBeamInCanvasSerice, DrawRebarBeamInCanvasSerice>();
+                    service.AddSingleton<IRebarBeamTypeService, RebarBeamTypeService>();
                     var provider = service.BuildServiceProvider();
                     var installRebarBeamV2ViewModel = provider.GetService<InstallRebarBeamV2ViewModel>();
                     installRebarBeamV2ViewModel.MainView.ShowDialog();

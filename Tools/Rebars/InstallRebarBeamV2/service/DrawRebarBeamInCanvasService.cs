@@ -8,9 +8,9 @@ using Utils.canvass;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
 {
-    public class DrawRebarBeamInCanvas : IDrawRebarBeamInCanvas
+    public class DrawRebarBeamInCanvasSerice : IDrawRebarBeamInCanvasSerice
     {
-        public DrawRebarBeamInCanvas()
+        public DrawRebarBeamInCanvasSerice()
         {
         }
         public void DrawSectionBeamConcrete(RebarBeam rebarBeam, InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel)

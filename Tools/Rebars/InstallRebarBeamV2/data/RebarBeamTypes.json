@@ -1,6 +1,7 @@
 {
   "BeamId": 485529,
   "Name": "FB5",
+  "NameType": "FB5",
   "BeamWidthMm": 600.0,
   "BeamHeightMm": 1400.0,
   "RebarBeamSectionStart": {

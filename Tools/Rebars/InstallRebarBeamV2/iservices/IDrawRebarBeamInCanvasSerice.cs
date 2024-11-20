@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices
 {
-    public interface IDrawRebarBeamInCanvas
+    public interface IDrawRebarBeamInCanvasSerice
     {
         public void DrawSectionBeamConcrete(RebarBeam rebarBeam, InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel);
         public void DrawSectionBeamStirrup(RebarBeam rebarBeam, InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel);
