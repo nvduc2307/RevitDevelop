@@ -10,6 +10,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
     {
         public ElementInstances ElementInstances { get; set; }
         public InstallRebarBeamView MainView { get; set; }
+        public SettingRebarSection SettingRebarSection { get; set; }
         public CanvasPageBase CanvasPageSectionStart { get; set; }
         public CanvasPageBase CanvasPageSectionMid { get; set; }
         public CanvasPageBase CanvasPageSectionEnd { get; set; }
@@ -25,14 +26,97 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
 
         private void MainView_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            CanvasPageSectionStart = new CanvasPageBase(MainView.FindName("CanvasSectionStart") as Canvas);
-            CanvasPageSectionMid = new CanvasPageBase(MainView.FindName("CanvasSectionMid") as Canvas);
-            CanvasPageSectionEnd = new CanvasPageBase(MainView.FindName("CanvasSectionEnd") as Canvas);
-            _drawRebarBeamInCanvas.DrawSectionBeamConcrete(ElementInstances.RebarBeamActive);
+            var settingRebarSection = MainView.FindName("SettingRebarSection") as SettingRebarSection;
+            CanvasPageSectionStart = new CanvasPageBase(settingRebarSection.FindName("CanvasSectionStart") as Canvas);
+            CanvasPageSectionMid = new CanvasPageBase(settingRebarSection.FindName("CanvasSectionMid") as Canvas);
+            CanvasPageSectionEnd = new CanvasPageBase(settingRebarSection.FindName("CanvasSectionEnd") as Canvas);
+            _drawRebarBeamInCanvas.DrawSectionBeamConcrete(ElementInstances.RebarBeamActive, this);
+            _drawRebarBeamInCanvas.DrawSectionBeamStirrup(ElementInstances.RebarBeamActive, this);
+            ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+            ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
         }
         private void InitAction()
         {
+            foreach (var rebarBeam in ElementInstances.RebarBeams)
+            {
+                rebarBeam.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+                };
 
+                rebarBeam.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel2.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel2.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel2.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+                };
+
+                rebarBeam.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel3.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel3.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel3.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionTop = _drawRebarBeamInCanvas.DrawSectionBeammMainBarTop(ElementInstances.RebarBeamActive, this);
+                };
+
+                rebarBeam.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel1.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevel1.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel1.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
+                };
+
+                rebarBeam.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel2.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevel2.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel2.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
+                };
+
+                rebarBeam.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel3.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevel3.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
+                };
+                rebarBeam.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel3.QuantityChange = () =>
+                {
+                    ElementInstances.MainRebarSectionBot = _drawRebarBeamInCanvas.DrawSectionBeammMainBarBot(ElementInstances.RebarBeamActive, this);
+                };
+            }
         }
     }
 }

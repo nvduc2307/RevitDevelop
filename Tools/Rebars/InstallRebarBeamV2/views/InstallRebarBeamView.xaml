@@ -10,7 +10,7 @@
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
         MinHeight="400" 
-        MinWidth="800">
+        MinWidth="900">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -21,7 +21,7 @@
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="0.2*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel 
@@ -48,7 +48,7 @@
                 Style="{StaticResource RadioBoxPrimary}"/>
         </StackPanel>
         <StackPanel Margin="10" Grid.Column="1">
-            <userControl:SettingRebarSection/>
+            <userControl:SettingRebarSection x:Name="SettingRebarSection"/>
         </StackPanel>
     </Grid>
 </Window>

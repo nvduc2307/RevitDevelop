@@ -2,6 +2,7 @@
 using HcBimUtils.DocumentUtils;
 using RevitDevelop.Utils.RevElements;
 using RevitDevelop.Utils.RevElements.RevRebars;
+using System.Windows;
 using Utils.FilterElements;
 using Utils.SelectionFilterInRevit;
 
@@ -9,6 +10,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
 {
     public partial class ElementInstances : ObservableObject
     {
+        public double DistanceRebarToRebarMm { get; set; }
         public RevElement Beam { get; set; }
         public List<RebarBarTypeCustom> RebarBarTypeCustoms { get; set; }
         public List<string> RebarDiameters { get; set; }
@@ -17,8 +19,11 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             get => new List<int> { 1, 2, 3, };
         }
         public List<RebarBeam> RebarBeams { get; set; }
+        public double CoverMm { get; set; }
         [ObservableProperty]
         private RebarBeam _rebarBeamActive;
+        public List<UIElement> MainRebarSectionTop { get; set; }
+        public List<UIElement> MainRebarSectionBot { get; set; }
         public ElementInstances()
         {
             var obj = AC.UiDoc.Selection.PickObject(
@@ -32,6 +37,10 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             RebarBeams = Beam.ElementSubs?.Select(x => new RebarBeam(x)).ToList();
             InitDataRebarBeam();
             RebarBeamActive = RebarBeams.FirstOrDefault();
+            DistanceRebarToRebarMm = 100;
+            CoverMm = 30;
+            MainRebarSectionTop = new List<UIElement>();
+            MainRebarSectionBot = new List<UIElement>();
         }
         public void InitDataRebarBeam()
         {
@@ -53,11 +62,17 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             {
                 RebarBeamTop.TopRebarGroupTypeChangeFunc(rebarBeamSection.RebarBeamTop);
             };
+            rebarBeamSection.RebarBeamStirrup = new RebarBeamStirrup();
+            rebarBeamSection.RebarBeamStirrup.HostId = rebarBeam.BeamId;
+            rebarBeamSection.RebarBeamStirrup.Diameter = RebarDiameters.FirstOrDefault();
+            rebarBeamSection.RebarBeamStirrup.Spacing = 100;
+            rebarBeamSection.RebarBeamStirrup.RebarBeamType = 2;
+
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1 = new RebarBeamMainBar();
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.HostId = rebarBeam.BeamId;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.Diameter = RebarDiameters.FirstOrDefault();
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.Quantity = 3;
-            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarBeamType = 3;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarBeamType = 0;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarTop;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel1;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevelActive = rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1;
@@ -66,7 +81,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.HostId = rebarBeam.BeamId;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.Diameter = RebarDiameters.FirstOrDefault();
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.Quantity = 3;
-            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarBeamType = 3;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarBeamType = 0;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarTop;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel2;
 
@@ -74,7 +89,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.HostId = rebarBeam.BeamId;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.Diameter = RebarDiameters.FirstOrDefault();
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.Quantity = 3;
-            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarBeamType = 3;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarBeamType = 0;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarTop;
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel2;
 
@@ -88,7 +103,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.HostId = rebarBeam.BeamId;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.Diameter = RebarDiameters.FirstOrDefault();
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.Quantity = 3;
-            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarBeamType = 3;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarBeamType = 0;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarBot;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel1;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevelActive = rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1;
@@ -97,7 +112,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.HostId = rebarBeam.BeamId;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.Diameter = RebarDiameters.FirstOrDefault();
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.Quantity = 3;
-            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarBeamType = 3;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarBeamType = 0;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarBot;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel2;
 
@@ -105,7 +120,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.HostId = rebarBeam.BeamId;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.Diameter = RebarDiameters.FirstOrDefault();
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.Quantity = 3;
-            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarBeamType = 3;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarBeamType = 0;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarBot;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel2;
         }

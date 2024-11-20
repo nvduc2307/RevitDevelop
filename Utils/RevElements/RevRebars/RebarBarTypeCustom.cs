@@ -38,5 +38,6 @@ namespace RevitDevelop.Utils.RevElements.RevRebars
             StirrupOrTieBendDiameter = RebarBarType.get_Parameter(BuiltInParameter.REBAR_BAR_STIRRUP_BEND_DIAMETER).AsDouble();
             MaximumBendRadius = RebarBarType.get_Parameter(BuiltInParameter.REBAR_BAR_MAXIMUM_BEND_RADIUS).AsDouble();
         }
+
     }
 }

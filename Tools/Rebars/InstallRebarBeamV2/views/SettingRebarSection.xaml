@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:RevitDevelop.Tools.Rebars.InstallRebarBeamV2.views"
              mc:Ignorable="d" 
-             d:DesignHeight="650" d:DesignWidth="800">
+             d:DesignHeight="650" d:DesignWidth="950">
     <UserControl.Resources>
         <Style TargetType="TextBox">
             <Setter Property="Height" Value="25"/>
@@ -40,320 +40,364 @@
             <GroupBox 
                 Header="Section A"
                 Grid.Column="0">
-                <StackPanel>
-                    <GroupBox Header="Setting Rebar Top">
-                        <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <GroupBox Header="Setting Rebar Top">
                             <StackPanel>
-                                <TextBlock Text="Group"/>
-                                <ComboBox 
-                                    ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
-                                    SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarGroupTypeActive}"/>
+                                <StackPanel>
+                                    <TextBlock Text="Group"/>
+                                    <ComboBox 
+                                        ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
+                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarGroupTypeActive}"/>
+                                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevelActive.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Quantity"/>
+                                        <TextBox 
+                                            Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevelActive.Quantity, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                                        ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevelActive.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevelActive.Quantity}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Setting Rebar Bot">
-                        <StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Setting Rebar Bot">
                             <StackPanel>
-                                <TextBlock Text="Group"/>
-                                <ComboBox 
-                                    ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
-                                    SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarGroupTypeActive}"/>
+                                <StackPanel>
+                                    <TextBlock Text="Group"/>
+                                    <ComboBox 
+                                        ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
+                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarGroupTypeActive}"/>
+                                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevelActive.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Quantity"/>
+                                        <TextBox 
+                                            Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevelActive.Quantity, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                                        ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevelActive.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevelActive.Quantity}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Main Stirrup">
-                        <StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Main Stirrup">
                             <StackPanel>
-                                <TextBlock Text="Group"/>
-                                <ComboBox 
-                                    ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
-                                    SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType}"/>
+                                <StackPanel>
+                                    <TextBlock Text="Group"/>
+                                    <ComboBox 
+                                        ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
+                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType}"/>
+                                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamStirrup.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Spacing"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamStirrup.Spacing}"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                                        ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.Spacing}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="SideBar">
-                        <StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="SideBar">
+                            <StackPanel>
 
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                                        ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.Quantity}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <Canvas x:Name="CanvasSectionStart" Background="AliceBlue" Height="150"/>
-                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Quantity"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.Quantity}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <Canvas 
+                            x:Name="CanvasSectionStart" 
+                            ClipToBounds="True"
+                            Background="AliceBlue" 
+                            Height="150"
+                            Width="150"/>
+                    </StackPanel>
+                </Grid>
             </GroupBox>
             <GroupBox 
                 Header="Section B"
                 Grid.Column="1">
-                <StackPanel>
-                    <GroupBox Header="Setting Rebar Top">
-                        <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <GroupBox Header="Setting Rebar Top">
                             <StackPanel>
-                                <TextBlock Text="Group"/>
-                                <ComboBox 
-                                    ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
-                                    SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarGroupTypeActive}"/>
+                                <StackPanel>
+                                    <TextBlock Text="Group"/>
+                                    <ComboBox 
+                                        ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
+                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarGroupTypeActive}"/>
+                                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevelActive.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Quantity"/>
+                                        <TextBox 
+                                            Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevelActive.Quantity, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevelActive.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevelActive.Quantity}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Setting Rebar Bot">
-                        <StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Setting Rebar Bot">
                             <StackPanel>
-                                <TextBlock Text="Group"/>
-                                <ComboBox 
-                        ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
-                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarGroupTypeActive}"/>
+                                <StackPanel>
+                                    <TextBlock Text="Group"/>
+                                    <ComboBox 
+                            ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
+                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarGroupTypeActive}"/>
+                                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevelActive.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Quantity"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevelActive.Quantity, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevelActive.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevelActive.Quantity}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Main Stirrup">
-                        <StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Main Stirrup">
                             <StackPanel>
-                                <TextBlock Text="Group"/>
-                                <ComboBox 
-                        ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
-                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType}"/>
+                                <StackPanel>
+                                    <TextBlock Text="Group"/>
+                                    <ComboBox 
+                            ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
+                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType}"/>
+                                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamStirrup.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Spacing"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamStirrup.Spacing}"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.Spacing}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="SideBar">
-                        <StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="SideBar">
+                            <StackPanel>
 
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.Quantity}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <Canvas x:Name="CanvasSectionMid" Background="AliceBlue" Height="150"/>
-                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Quantity"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.Quantity}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <Canvas 
+                            x:Name="CanvasSectionMid" 
+                            ClipToBounds="True"
+                            Background="AliceBlue" 
+                            Width="150"
+                            Height="150"/>
+                        
+                    </StackPanel>
+                </Grid>
             </GroupBox>
             <GroupBox 
                 Header="Section C"
                 Grid.Column="2">
-                <StackPanel>
-                    <GroupBox Header="Setting Rebar Top">
-                        <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <GroupBox Header="Setting Rebar Top">
                             <StackPanel>
-                                <TextBlock Text="Group"/>
-                                <ComboBox 
-                        ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
-                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarGroupTypeActive}"/>
+                                <StackPanel>
+                                    <TextBlock Text="Group"/>
+                                    <ComboBox 
+                            ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
+                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarGroupTypeActive}"/>
+                                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevelActive.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Quantity"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevelActive.Quantity, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevelActive.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevelActive.Quantity}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Setting Rebar Bot">
-                        <StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Setting Rebar Bot">
                             <StackPanel>
-                                <TextBlock Text="Group"/>
-                                <ComboBox 
-                                    ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
-                                    SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarGroupTypeActive}"/>
+                                <StackPanel>
+                                    <TextBlock Text="Group"/>
+                                    <ComboBox 
+                                        ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
+                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarGroupTypeActive}"/>
+                                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevelActive.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Quantity"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevelActive.Quantity, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                                        ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevelActive.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevelActive.Quantity}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Main Stirrup">
-                        <StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Main Stirrup">
                             <StackPanel>
-                                <TextBlock Text="Group"/>
-                                <ComboBox 
-                                    ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
-                                    SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType}"/>
+                                <StackPanel>
+                                    <TextBlock Text="Group"/>
+                                    <ComboBox 
+                                        ItemsSource="{Binding ElementInstances.MainBarGroupTypes}"
+                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType}"/>
+                                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamStirrup.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Spacing"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamStirrup.Spacing}"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                                        ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.Spacing}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="SideBar">
-                        <StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="SideBar">
+                            <StackPanel>
 
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,5,0" Grid.Column="0">
-                                    <TextBlock Text="Diameter"/>
-                                    <ComboBox
-                                        ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                        SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5,0,0,0" Grid.Column="1">
-                                    <TextBlock Text="Quantity"/>
-                                    <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.Quantity}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <Canvas x:Name="CanvasSectionEnd" Background="AliceBlue" Height="150"/>
-                </StackPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,5,0" Grid.Column="0">
+                                        <TextBlock Text="Diameter"/>
+                                        <ComboBox
+                                            ItemsSource="{Binding ElementInstances.RebarDiameters}"
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,0,0" Grid.Column="1">
+                                        <TextBlock Text="Quantity"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.Quantity}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <Canvas 
+                            x:Name="CanvasSectionEnd"
+                            ClipToBounds="True"
+                            Background="AliceBlue" 
+                            Width="150"
+                            Height="150"/>
+                        
+                    </StackPanel>
+                </Grid>
             </GroupBox>
         </Grid>
     </StackPanel>
