@@ -10,18 +10,30 @@
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
         MinHeight="400" 
-        MinWidth="900">
+        MinWidth="950">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../../../../Utils/Themes/ThemeColorStyle.xaml"/>
                 <ResourceDictionary Source="../../../../Utils/Themes/ThemeRadioButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="ComboBox">
+                <Setter Property="Cursor" Value="Hand"/>
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="Height" Value="25"/>
+                <Setter Property="Width" Value="70"/>
+                <Setter Property="Cursor" Value="Hand"/>
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="Height" Value="25"/>
+                <Setter Property="Width" Value="100"/>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition Width="0.25*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel 
@@ -44,11 +56,34 @@
                 GroupName="menuTab"
                 Foreground="{StaticResource Color_Text1}"
                 HorizontalContentAlignment="Left" 
-                Content="Setting Beam" 
+                Content="Setting Cut Rebar" 
                 Style="{StaticResource RadioBoxPrimary}"/>
         </StackPanel>
         <StackPanel Margin="10" Grid.Column="1">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox Width="100"/>
+                        <Button Margin="5,0,0,0" Content="Apply"/>
+                        <Button Margin="5,0,0,0" Content="Save"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Margin="0,0,5,0"/>
+                            <Button Content="Save As"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
             <userControl:SettingRebarSection x:Name="SettingRebarSection"/>
+            <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                <Button Command="{Binding OKCommand}" Content="OK"/>
+                <Button Margin="5,0,0,0" Content="Cancel"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

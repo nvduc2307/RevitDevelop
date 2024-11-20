@@ -22,8 +22,9 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
         public double CoverMm { get; set; }
         [ObservableProperty]
         private RebarBeam _rebarBeamActive;
-        public List<UIElement> MainRebarSectionTop { get; set; }
-        public List<UIElement> MainRebarSectionBot { get; set; }
+        public List<UIElement> MainRebarTopUIElement { get; set; }
+        public List<UIElement> MainRebarBotUIElement { get; set; }
+        public List<UIElement> SideBarUIElement { get; set; }
         public ElementInstances()
         {
             var obj = AC.UiDoc.Selection.PickObject(
@@ -33,14 +34,15 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             RebarBarTypeCustoms = AC.Document.GetElementsFromClass<RebarBarType>()
                 .Select(x => new RebarBarTypeCustom(x))
                 .ToList();
-            RebarDiameters = RebarBarTypeCustoms.Select(x => x.NameStyle).ToList();
+            RebarDiameters = RebarBarTypeCustoms.Select(x => x.NameStyle).OrderBy(x => x).ToList();
             RebarBeams = Beam.ElementSubs?.Select(x => new RebarBeam(x)).ToList();
             InitDataRebarBeam();
             RebarBeamActive = RebarBeams.FirstOrDefault();
             DistanceRebarToRebarMm = 100;
             CoverMm = 30;
-            MainRebarSectionTop = new List<UIElement>();
-            MainRebarSectionBot = new List<UIElement>();
+            MainRebarTopUIElement = new List<UIElement>();
+            MainRebarBotUIElement = new List<UIElement>();
+            SideBarUIElement = new List<UIElement>();
         }
         public void InitDataRebarBeam()
         {
@@ -67,6 +69,11 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             rebarBeamSection.RebarBeamStirrup.Diameter = RebarDiameters.FirstOrDefault();
             rebarBeamSection.RebarBeamStirrup.Spacing = 100;
             rebarBeamSection.RebarBeamStirrup.RebarBeamType = 2;
+
+            rebarBeamSection.RebarBeamSideBar = new RebarBeamSideBar();
+            rebarBeamSection.RebarBeamSideBar.HostId = rebarBeam.BeamId;
+            rebarBeamSection.RebarBeamSideBar.Diameter = RebarDiameters.FirstOrDefault();
+            rebarBeamSection.RebarBeamSideBar.QuantitySide = 1;
 
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1 = new RebarBeamMainBar();
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.HostId = rebarBeam.BeamId;

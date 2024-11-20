@@ -24,7 +24,7 @@
         public RebarBeamMainBar RebarBeamTopLevel2 { get; set; }
         public RebarBeamMainBar RebarBeamTopLevel3 { get; set; }
         [ObservableProperty]
-        public RebarBeamMainBar _rebarBeamTopLevelActive;
+        private RebarBeamMainBar _rebarBeamTopLevelActive;
         public Action RebarGroupTypeChange { get; set; }
         public static void TopRebarGroupTypeChangeFunc(RebarBeamTop rebarBeam)
         {
@@ -60,7 +60,7 @@
         public RebarBeamMainBar RebarBeamBotLevel2 { get; set; }
         public RebarBeamMainBar RebarBeamBotLevel3 { get; set; }
         [ObservableProperty]
-        public RebarBeamMainBar _rebarBeamBotLevelActive;
+        private RebarBeamMainBar _rebarBeamBotLevelActive;
         public Action RebarGroupTypeChange { get; set; }
         public static void BotRebarGroupTypeChangeFunc(RebarBeamBot rebarBeam)
         {

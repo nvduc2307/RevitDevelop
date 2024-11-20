@@ -34,7 +34,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
             _drawSectionBeamStirrup(rebarBeam, installRebarBeamV2ViewModel.ElementInstances.CoverMm, canvasEnd);
         }
 
-        public List<UIElement> DrawSectionBeammMainBarTop(RebarBeam rebarBeam, InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel)
+        public List<UIElement> DrawSectionBeamMainBarTop(RebarBeam rebarBeam, InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel)
         {
 
             var results = new List<UIElement>();
@@ -42,7 +42,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
             var canvasMid = installRebarBeamV2ViewModel.CanvasPageSectionMid;
             var canvasEnd = installRebarBeamV2ViewModel.CanvasPageSectionEnd;
 
-            foreach (var item in installRebarBeamV2ViewModel.ElementInstances.MainRebarSectionTop)
+            foreach (var item in installRebarBeamV2ViewModel.ElementInstances.MainRebarTopUIElement)
             {
                 try
                 {
@@ -153,14 +153,14 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
             return results;
         }
 
-        public List<UIElement> DrawSectionBeammMainBarBot(RebarBeam rebarBeam, InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel)
+        public List<UIElement> DrawSectionBeamMainBarBot(RebarBeam rebarBeam, InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel)
         {
             var results = new List<UIElement>();
             var canvasStart = installRebarBeamV2ViewModel.CanvasPageSectionStart;
             var canvasMid = installRebarBeamV2ViewModel.CanvasPageSectionMid;
             var canvasEnd = installRebarBeamV2ViewModel.CanvasPageSectionEnd;
 
-            foreach (var item in installRebarBeamV2ViewModel.ElementInstances.MainRebarSectionBot)
+            foreach (var item in installRebarBeamV2ViewModel.ElementInstances.MainRebarBotUIElement)
             {
                 try
                 {
@@ -268,6 +268,204 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
             results.AddRange(uiElement7);
             results.AddRange(uiElement8);
             results.AddRange(uiElement9);
+            return results;
+        }
+
+        public List<UIElement> DrawSectionBeamSideBar(RebarBeam rebarBeam, InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel)
+        {
+            var results = new List<UIElement>();
+            try
+            {
+                var canvasStart = installRebarBeamV2ViewModel.CanvasPageSectionStart;
+                var canvasMid = installRebarBeamV2ViewModel.CanvasPageSectionMid;
+                var canvasEnd = installRebarBeamV2ViewModel.CanvasPageSectionEnd;
+
+                foreach (var item in installRebarBeamV2ViewModel.ElementInstances.SideBarUIElement)
+                {
+                    try
+                    {
+                        canvasStart.Parent.Children.Remove(item);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    try
+                    {
+                        canvasMid.Parent.Children.Remove(item);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    try
+                    {
+                        canvasEnd.Parent.Children.Remove(item);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+                var uiElement1 = _drawSectionBeamSideBar(
+                    rebarBeam,
+                    installRebarBeamV2ViewModel,
+                    installRebarBeamV2ViewModel.ElementInstances.CoverMm,
+                    canvasStart,
+                    RebarBeamMainBarLevelType.RebarBot,
+                    RebarBeamSectionType.SectionStart,
+                    RebarBeamMainBarGroupType.GroupLevel1);
+                var uiElement2 = _drawSectionBeamSideBar(
+                    rebarBeam,
+                    installRebarBeamV2ViewModel,
+                    installRebarBeamV2ViewModel.ElementInstances.CoverMm,
+                    canvasMid,
+                    RebarBeamMainBarLevelType.RebarBot,
+                    RebarBeamSectionType.SectionMid,
+                    RebarBeamMainBarGroupType.GroupLevel1);
+                var uiElement3 = _drawSectionBeamSideBar(
+                    rebarBeam,
+                    installRebarBeamV2ViewModel,
+                    installRebarBeamV2ViewModel.ElementInstances.CoverMm,
+                    canvasEnd,
+                    RebarBeamMainBarLevelType.RebarBot,
+                    RebarBeamSectionType.SectionEnd,
+                    RebarBeamMainBarGroupType.GroupLevel1);
+                results.AddRange(uiElement1);
+                results.AddRange(uiElement2);
+                results.AddRange(uiElement3);
+            }
+            catch (Exception)
+            {
+            }
+            return results;
+        }
+
+        private List<UIElement> _drawSectionBeamSideBar(
+            RebarBeam rebarBeam,
+            InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel,
+            double coverMm,
+            CanvasPageBase canvasPageBase,
+            RebarBeamMainBarLevelType rebarBeamMainBarLevelType,
+            RebarBeamSectionType sectionType,
+            RebarBeamMainBarGroupType rebarBeamMainBarGroupType)
+        {
+            var results = new List<UIElement>();
+            try
+            {
+                var centerCanvas = canvasPageBase.Center;
+                var scale = canvasPageBase.RatioScale * canvasPageBase.DistanceCrossScreen / Math.Sqrt(rebarBeam.BeamWidthMm * rebarBeam.BeamWidthMm + rebarBeam.BeamHeightMm * rebarBeam.BeamHeightMm);
+                var option = OptionStyleInstanceInCanvas.OPTION_REBAR;
+                var rebarBarTypeCustoms = installRebarBeamV2ViewModel.ElementInstances.RebarBarTypeCustoms;
+                var distanceRToRMm = installRebarBeamV2ViewModel.ElementInstances.DistanceRebarToRebarMm;
+                var coverUpMm = coverMm;
+                var coverSideMm = coverMm;
+                _getCover(
+                    rebarBeam,
+                    installRebarBeamV2ViewModel,
+                    coverMm,
+                    canvasPageBase,
+                    sectionType,
+                    rebarBeamMainBarLevelType,
+                    rebarBeamMainBarGroupType,
+                    out double _coverUpMm,
+                    out double _coverSideMm);
+                coverUpMm = _coverUpMm + 40;
+                coverSideMm = _coverSideMm + 40;
+                var p1 = new System.Windows.Point(centerCanvas.X - scale * (rebarBeam.BeamWidthMm / 2 - coverSideMm), centerCanvas.Y - scale * (rebarBeam.BeamHeightMm / 2 - coverUpMm));
+                var p2 = new System.Windows.Point(centerCanvas.X + scale * (rebarBeam.BeamWidthMm / 2 - coverSideMm), centerCanvas.Y - scale * (rebarBeam.BeamHeightMm / 2 - coverUpMm));
+                var p3 = new System.Windows.Point(centerCanvas.X + scale * (rebarBeam.BeamWidthMm / 2 - coverSideMm), centerCanvas.Y + scale * (rebarBeam.BeamHeightMm / 2 - coverUpMm));
+                var p4 = new System.Windows.Point(centerCanvas.X - scale * (rebarBeam.BeamWidthMm / 2 - coverSideMm), centerCanvas.Y + scale * (rebarBeam.BeamHeightMm / 2 - coverUpMm));
+                var ps = new List<System.Windows.Point>() {
+                    p1, p2, p3, p4
+                };
+                var diameterMm = 7;
+                InstanceInCanvasCircel circleL = null;
+                InstanceInCanvasCircel circleR = null;
+                int qty = 0;
+                int qtyHaft = 0;
+                RebarBeamSection section = null;
+                double distance = p1.DistanceTo(p4) - 50 * 6 * scale;
+                double spacing = 0;
+                var midL = new System.Windows.Point((p1.X + p4.X) * 0.5, (p1.Y + p4.Y) * 0.5);
+                var midR = new System.Windows.Point((p2.X + p3.X) * 0.5, (p2.Y + p3.Y) * 0.5);
+                var pL = midL;
+                var pR = midR;
+                switch (sectionType)
+                {
+                    case RebarBeamSectionType.SectionStart:
+                        section = installRebarBeamV2ViewModel.ElementInstances.RebarBeamActive.RebarBeamSectionStart;
+                        qty = section.RebarBeamSideBar.QuantitySide;
+                        qtyHaft = (qty - 1) / 2;
+                        spacing = distance / (qty + 1);
+                        pL = qty % 2 == 0
+                            ? new System.Windows.Point(midL.X, midL.Y - spacing / 2 - qtyHaft * spacing)
+                            : new System.Windows.Point(midL.X, midL.Y - qtyHaft * spacing);
+                        pR = qty % 2 == 0
+                            ? new System.Windows.Point(midR.X, midR.Y - spacing / 2 - qtyHaft * spacing)
+                            : new System.Windows.Point(midR.X, midR.Y - qtyHaft * spacing);
+                        for (int i = 0; i < qty; i++)
+                        {
+                            var ppL = pL.Translate(new System.Windows.Point(0, spacing * i));
+                            var ppR = pR.Translate(new System.Windows.Point(0, spacing * i));
+                            circleL = new InstanceInCanvasCircel(canvasPageBase, option, centerCanvas, diameterMm, ppL, new System.Windows.Point(0, 0), "");
+                            circleR = new InstanceInCanvasCircel(canvasPageBase, option, centerCanvas, diameterMm, ppR, new System.Windows.Point(0, 0), "");
+                            circleL.DrawInCanvas();
+                            circleR.DrawInCanvas();
+                            results.Add(circleL.UIElement);
+                            results.Add(circleR.UIElement);
+                        }
+                        break;
+                    case RebarBeamSectionType.SectionMid:
+                        section = installRebarBeamV2ViewModel.ElementInstances.RebarBeamActive.RebarBeamSectionMid;
+                        qty = section.RebarBeamSideBar.QuantitySide;
+                        qtyHaft = (qty - 1) / 2;
+                        spacing = distance / (qty + 1);
+                        pL = qty % 2 == 0
+                            ? new System.Windows.Point(midL.X, midL.Y - spacing / 2 - qtyHaft * spacing)
+                            : new System.Windows.Point(midL.X, midL.Y - qtyHaft * spacing);
+                        pR = qty % 2 == 0
+                            ? new System.Windows.Point(midR.X, midR.Y - spacing / 2 - qtyHaft * spacing)
+                            : new System.Windows.Point(midR.X, midR.Y - qtyHaft * spacing);
+                        for (int i = 0; i < qty; i++)
+                        {
+                            var ppL = pL.Translate(new System.Windows.Point(0, spacing * i));
+                            var ppR = pR.Translate(new System.Windows.Point(0, spacing * i));
+                            circleL = new InstanceInCanvasCircel(canvasPageBase, option, centerCanvas, diameterMm, ppL, new System.Windows.Point(0, 0), "");
+                            circleR = new InstanceInCanvasCircel(canvasPageBase, option, centerCanvas, diameterMm, ppR, new System.Windows.Point(0, 0), "");
+                            circleL.DrawInCanvas();
+                            circleR.DrawInCanvas();
+                            results.Add(circleL.UIElement);
+                            results.Add(circleR.UIElement);
+                        }
+                        break;
+                    case RebarBeamSectionType.SectionEnd:
+                        section = installRebarBeamV2ViewModel.ElementInstances.RebarBeamActive.RebarBeamSectionEnd;
+                        qty = section.RebarBeamSideBar.QuantitySide;
+                        spacing = distance / (qty + 1);
+                        qtyHaft = (qty - 1) / 2;
+                        pL = qty % 2 == 0
+                            ? new System.Windows.Point(midL.X, midL.Y - spacing / 2 - qtyHaft * spacing)
+                            : new System.Windows.Point(midL.X, midL.Y - qtyHaft * spacing);
+                        pR = qty % 2 == 0
+                            ? new System.Windows.Point(midR.X, midR.Y - spacing / 2 - qtyHaft * spacing)
+                            : new System.Windows.Point(midR.X, midR.Y - qtyHaft * spacing);
+                        for (int i = 0; i < qty; i++)
+                        {
+                            var ppL = pL.Translate(new System.Windows.Point(0, spacing * i));
+                            var ppR = pR.Translate(new System.Windows.Point(0, spacing * i));
+                            circleL = new InstanceInCanvasCircel(canvasPageBase, option, centerCanvas, diameterMm, ppL, new System.Windows.Point(0, 0), "");
+                            circleR = new InstanceInCanvasCircel(canvasPageBase, option, centerCanvas, diameterMm, ppR, new System.Windows.Point(0, 0), "");
+                            circleL.DrawInCanvas();
+                            circleR.DrawInCanvas();
+                            results.Add(circleL.UIElement);
+                            results.Add(circleR.UIElement);
+                        }
+
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+            }
             return results;
         }
         private List<UIElement> _drawSectionBeamMainBar(
@@ -965,6 +1163,5 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
             var sectionBeam = new InstanceInCanvasPolygon(canvasPageBase, option, ps);
             sectionBeam.DrawInCanvas();
         }
-
     }
 }

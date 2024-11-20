@@ -38,7 +38,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <GroupBox 
-                Header="Section A"
+                Header="Section Start"
                 Grid.Column="0">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -138,11 +138,11 @@
                                         <TextBlock Text="Diameter"/>
                                         <ComboBox
                                             ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamSideBar.Diameter}"/>
                                     </StackPanel>
                                     <StackPanel Margin="5,0,0,0" Grid.Column="1">
                                         <TextBlock Text="Quantity"/>
-                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.Quantity}"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamSideBar.QuantitySide, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
@@ -159,7 +159,7 @@
                 </Grid>
             </GroupBox>
             <GroupBox 
-                Header="Section B"
+                Header="Section Middle"
                 Grid.Column="1">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -258,11 +258,11 @@
                                         <TextBlock Text="Diameter"/>
                                         <ComboBox
                                 ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
+                                SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamSideBar.Diameter}"/>
                                     </StackPanel>
                                     <StackPanel Margin="5,0,0,0" Grid.Column="1">
                                         <TextBlock Text="Quantity"/>
-                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.Quantity}"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamSideBar.QuantitySide, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
@@ -280,7 +280,7 @@
                 </Grid>
             </GroupBox>
             <GroupBox 
-                Header="Section C"
+                Header="Section End"
                 Grid.Column="2">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -378,11 +378,11 @@
                                         <TextBlock Text="Diameter"/>
                                         <ComboBox
                                             ItemsSource="{Binding ElementInstances.RebarDiameters}"
-                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.Diameter}"/>
+                                            SelectedItem="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamSideBar.Diameter}"/>
                                     </StackPanel>
                                     <StackPanel Margin="5,0,0,0" Grid.Column="1">
                                         <TextBlock Text="Quantity"/>
-                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.Quantity}"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamSideBar.QuantitySide, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>

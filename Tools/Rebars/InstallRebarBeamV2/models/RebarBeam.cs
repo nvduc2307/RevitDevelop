@@ -20,6 +20,10 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             BeamWidthMm = GetBeamWidthMm(revBoxBeam, out double beamHeightMm);
             BeamHeightMm = beamHeightMm;
         }
+        public RebarBeam()
+        {
+
+        }
         private double GetBeamWidthMm(RevBoxElement revBoxBeam, out double beamHeightMm)
         {
             var result = 0.0;
@@ -40,8 +44,8 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
                 var p1OXY = p1OYZ.RayPointToFace(revBoxBeam.VTZ, faceOXY);
                 var p2OXY = p2OYZ.RayPointToFace(revBoxBeam.VTZ, faceOXY);
 
-                result = p1OXY.Distance(p2OXY).FootToMm();
-                beamHeightMm = p1OXZ.Distance(p2OXZ).FootToMm();
+                result = Math.Round(p1OXY.Distance(p2OXY).FootToMm(), 0);
+                beamHeightMm = Math.Round(p1OXZ.Distance(p2OXZ).FootToMm(), 0);
             }
             catch (Exception)
             {
