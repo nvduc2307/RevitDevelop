@@ -27,20 +27,16 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
             }
         }
 
-        public List<RebarBeam> Delete(List<RebarBeam> rebarBeamTypes, string nameType, string pathSave)
+        public void Delete(List<RebarBeam> rebarBeamTypes, string nameType, string pathSave)
         {
             try
             {
-                if (rebarBeamTypes.Count == 0) throw new Exception("Khong co type nao");
-                var isRebarBeamTypeExist = rebarBeamTypes.FirstOrDefault(x => x.NameType == nameType);
+                List<RebarBeam> rebarBeams = [.. rebarBeamTypes];
+                if (rebarBeams.Count == 0) throw new Exception("Khong co type nao");
+                var isRebarBeamTypeExist = rebarBeams.FirstOrDefault(x => x.NameType == nameType);
                 if (isRebarBeamTypeExist != null) {
-                    rebarBeamTypes.Remove(isRebarBeamTypeExist);
-                    List<RebarBeam> rebarBeamTypesN = [.. rebarBeamTypes];
-                    foreach (var item in rebarBeamTypesN)
-                    {
-                        RebarBeam.ResetActionChange(item);
-                    }
-                    var content = JsonConvert.SerializeObject(rebarBeamTypesN);
+                    rebarBeams.Remove(isRebarBeamTypeExist);
+                    var content = JsonConvert.SerializeObject(rebarBeams);
                     File.WriteAllText(pathSave, content);
                 }
             }
@@ -48,54 +44,49 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
             {
                 IO.ShowWarning(ex.Message);
             }
-            return rebarBeamTypes.ToList();
         }
 
-        public List<RebarBeam> Save(List<RebarBeam> rebarBeamTypes, RebarBeam rebarBeamSave, string pathSave)
+        public void Save(List<RebarBeam> rebarBeamTypes, RebarBeam rebarBeamSave, string pathSave)
         {
             try
             {
-                var rebarBeam = rebarBeamTypes.FirstOrDefault(x=>x.NameType == rebarBeamSave.NameType);
-                var indexOf = rebarBeamTypes.IndexOf(rebarBeam);
-                rebarBeamTypes.Insert(indexOf, rebarBeamSave);
-                rebarBeamTypes.RemoveAt(indexOf + 1);
-                var content = JsonConvert.SerializeObject(rebarBeamTypes);
+                List<RebarBeam> rebarBeams = [.. rebarBeamTypes];
+                var rebarBeam = rebarBeams.FirstOrDefault(x=>x.NameType == rebarBeamSave.NameType);
+                var indexOf = rebarBeams.IndexOf(rebarBeam);
+                rebarBeams.Insert(indexOf, rebarBeamSave);
+                rebarBeams.RemoveAt(indexOf + 1);
+                var content = JsonConvert.SerializeObject(rebarBeams);
                 File.WriteAllText(pathSave, content);
             }
             catch (Exception)
             {
             }
-            return [.. rebarBeamTypes];
         }
 
-        public RebarBeam SaveAs(List<RebarBeam> rebarBeamTypes, string nameType, string pathSave)
+        public void SaveAs(List<RebarBeam> rebarBeamTypes, string nameType, string pathSave)
         {
-            var result = rebarBeamTypes.FirstOrDefault();
             try
             {
+                List<RebarBeam> rebarBeams = [..rebarBeamTypes];
                 if (string.IsNullOrEmpty(nameType)) throw new Exception("nameType is not empty");
-                var isRebarBeamTypeExist = rebarBeamTypes.Any(x=>x.NameType == nameType);
+                var isRebarBeamTypeExist = rebarBeams.Any(x=>x.NameType == nameType);
                 if (isRebarBeamTypeExist) throw new Exception("Type is existed");
                 var rebarBeamType = new RebarBeam
                 {
                     NameType = nameType
                 };
-                rebarBeamTypes.Add(rebarBeamType);
-                List<RebarBeam> rebarBeamTypesN = [.. rebarBeamTypes];
-                foreach (var item in rebarBeamTypesN)
+                rebarBeams.Add(rebarBeamType);
+                foreach (var item in rebarBeams)
                 {
                     RebarBeam.ResetActionChange(item);
                 }
-                var content = JsonConvert.SerializeObject(rebarBeamTypesN);
+                var content = JsonConvert.SerializeObject(rebarBeams);
                 File.WriteAllText(pathSave, content);
-                result = rebarBeamType;
             }
             catch (Exception ex)
             {
                 IO.ShowWarning(ex.Message);
-                result = rebarBeamTypes.FirstOrDefault();
             }
-            return result;
         }
     }
 }

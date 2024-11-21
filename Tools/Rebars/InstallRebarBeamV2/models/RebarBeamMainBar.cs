@@ -26,7 +26,7 @@
         [ObservableProperty]
         private RebarBeamMainBar _rebarBeamTopLevelActive;
         public Action RebarGroupTypeChange { get; set; }
-        public static void TopRebarGroupTypeChangeFunc(RebarBeamTop rebarBeam)
+        public static void TopRebarLeveTypeChangeFunc(RebarBeamTop rebarBeam)
         {
             switch (rebarBeam.RebarGroupTypeActive)
             {

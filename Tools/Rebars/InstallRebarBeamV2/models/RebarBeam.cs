@@ -98,11 +98,6 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
                 rebarBeam.RebarBeamSectionEnd.RebarBeamTop.RebarGroupTypeChange = null;
                 rebarBeam.RebarBeamSectionEnd.RebarBeamBot.RebarGroupTypeChange = null;
             }
-
-
-
-
-
         }
     }
 }

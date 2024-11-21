@@ -66,9 +66,9 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
         {
             foreach (var rebarBeam in RebarBeams)
             {
-                rebarBeam.RebarBeamSectionStart = RebarBeamTypeSelected?.RebarBeamSectionStart ?? new RebarBeamSectionStart();
-                rebarBeam.RebarBeamSectionMid = RebarBeamTypeSelected?.RebarBeamSectionMid ?? new RebarBeamSectionMid();
-                rebarBeam.RebarBeamSectionEnd = RebarBeamTypeSelected?.RebarBeamSectionEnd ?? new RebarBeamSectionEnd();
+                rebarBeam.RebarBeamSectionStart = new RebarBeamSectionStart();
+                rebarBeam.RebarBeamSectionMid = new RebarBeamSectionMid();
+                rebarBeam.RebarBeamSectionEnd = new RebarBeamSectionEnd();
                 InitDataRebarBeamSection(rebarBeam, rebarBeam.RebarBeamSectionStart);
                 InitDataRebarBeamSection(rebarBeam, rebarBeam.RebarBeamSectionMid);
                 InitDataRebarBeamSection(rebarBeam, rebarBeam.RebarBeamSectionEnd);
@@ -76,103 +76,119 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
         }
         private void InitDataRebarBeamSection(RebarBeam rebarBeam, RebarBeamSection rebarBeamSection)
         {
-            if (rebarBeamSection.RebarBeamStirrup == null)
+            RebarBeamSection sectionActive = null;
+            switch (rebarBeamSection.RebarBeamSectionType)
             {
-                rebarBeamSection.RebarBeamStirrup = new RebarBeamStirrup();
-                rebarBeamSection.RebarBeamStirrup.Diameter = RebarDiameters.FirstOrDefault();
-                rebarBeamSection.RebarBeamStirrup.Spacing = 100;
-                rebarBeamSection.RebarBeamStirrup.RebarBeamType = 2;
+                case (int)RebarBeamSectionType.SectionStart:
+                    sectionActive = RebarBeamTypeSelected?.RebarBeamSectionStart;
+                    break;
+                case (int)RebarBeamSectionType.SectionMid:
+                    sectionActive = RebarBeamTypeSelected?.RebarBeamSectionMid;
+                    break;
+                case (int)RebarBeamSectionType.SectionEnd:
+                    sectionActive = RebarBeamTypeSelected?.RebarBeamSectionEnd;
+                    break;
             }
+
+            rebarBeamSection.RebarBeamStirrup = new RebarBeamStirrup();
             rebarBeamSection.RebarBeamStirrup.HostId = rebarBeam.BeamId;
+            rebarBeamSection.RebarBeamStirrup.Diameter = sectionActive == null ? RebarDiameters.FirstOrDefault() : sectionActive.RebarBeamStirrup.Diameter;
+            rebarBeamSection.RebarBeamStirrup.Spacing = sectionActive == null ? 100 : sectionActive.RebarBeamStirrup.Spacing;
+            rebarBeamSection.RebarBeamStirrup.RebarBeamType = (int)RebarBeamType.RebarBeamStirrup;
 
-            if (rebarBeamSection.RebarBeamSideBar == null)
-            {
-                rebarBeamSection.RebarBeamSideBar = new RebarBeamSideBar();
-                rebarBeamSection.RebarBeamSideBar.Diameter = RebarDiameters.FirstOrDefault();
-                rebarBeamSection.RebarBeamSideBar.QuantitySide = 1;
-            }
+            rebarBeamSection.RebarBeamSideBar = new RebarBeamSideBar();
             rebarBeamSection.RebarBeamSideBar.HostId = rebarBeam.BeamId;
+            rebarBeamSection.RebarBeamSideBar.Diameter = sectionActive == null ? RebarDiameters.FirstOrDefault() : sectionActive.RebarBeamSideBar.Diameter;
+            rebarBeamSection.RebarBeamSideBar.QuantitySide = sectionActive == null ? 1 : sectionActive.RebarBeamSideBar.QuantitySide;
+            rebarBeamSection.RebarBeamSideBar.RebarBeamType = (int)RebarBeamType.RebarBeamSideBar;
 
-            if (rebarBeamSection.RebarBeamTop == null)
-            {
-                rebarBeamSection.RebarBeamTop = new RebarBeamTop();
-                if (rebarBeamSection.RebarBeamTop == null)
-                {
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1 = new RebarBeamMainBar();
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.Diameter = RebarDiameters.FirstOrDefault();
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.Quantity = 3;
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarBeamType = 0;
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarTop;
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel1;
-                }
-                if (rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2 == null)
-                {
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2 = new RebarBeamMainBar();
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.Diameter = RebarDiameters.FirstOrDefault();
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.Quantity = 3;
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarBeamType = 0;
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarTop;
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel2;
-                }
-
-                if(rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3 == null)
-                {
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3 = new RebarBeamMainBar();
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.Diameter = RebarDiameters.FirstOrDefault();
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.Quantity = 3;
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarBeamType = 0;
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarTop;
-                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel2;
-                }
-
-            }
+            rebarBeamSection.RebarBeamTop = new RebarBeamTop();
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1 = new RebarBeamMainBar();
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.HostId = rebarBeam.BeamId;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.Diameter = sectionActive == null ? RebarDiameters.FirstOrDefault() : sectionActive.RebarBeamTop.RebarBeamTopLevel1.Diameter;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.Quantity = sectionActive == null ? 3 : sectionActive.RebarBeamTop.RebarBeamTopLevel1.Quantity;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarBeamType = sectionActive == null ? 0 : sectionActive.RebarBeamTop.RebarBeamTopLevel1.RebarBeamType;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarLevelType = sectionActive == null ? (int)RebarBeamMainBarLevelType.RebarTop : sectionActive.RebarBeamTop.RebarBeamTopLevel1.RebarLevelType;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel1 : sectionActive.RebarBeamTop.RebarBeamTopLevel1.RebarGroupType;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1.RebarBeamType = (int)RebarBeamType.RebarBeamMainBar;
+
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2 = new RebarBeamMainBar();
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.HostId = rebarBeam.BeamId;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.Diameter = sectionActive == null ? RebarDiameters.FirstOrDefault() : sectionActive.RebarBeamTop.RebarBeamTopLevel2.Diameter;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.Quantity = sectionActive == null ? 3 : sectionActive.RebarBeamTop.RebarBeamTopLevel2.Quantity;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarBeamType = sectionActive == null ? 0 : sectionActive.RebarBeamTop.RebarBeamTopLevel2.RebarBeamType;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarLevelType = sectionActive == null ? (int)RebarBeamMainBarLevelType.RebarTop : sectionActive.RebarBeamTop.RebarBeamTopLevel2.RebarLevelType;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarGroupType = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel2 : sectionActive.RebarBeamTop.RebarBeamTopLevel2.RebarGroupType;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2.RebarBeamType = (int)RebarBeamType.RebarBeamMainBar;
+
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3 = new RebarBeamMainBar();
             rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.HostId = rebarBeam.BeamId;
-            rebarBeamSection.RebarBeamTop.RebarGroupTypeActive = (int)RebarBeamMainBarGroupType.GroupLevel1;
-            rebarBeamSection.RebarBeamTop.RebarBeamTopLevelActive = rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.Diameter = sectionActive == null ? RebarDiameters.FirstOrDefault() : sectionActive.RebarBeamTop.RebarBeamTopLevel3.Diameter;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.Quantity = sectionActive == null ? 3 : sectionActive.RebarBeamTop.RebarBeamTopLevel3.Quantity;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarBeamType = sectionActive == null ? 0 : sectionActive.RebarBeamTop.RebarBeamTopLevel3.RebarBeamType;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarLevelType = sectionActive == null ? (int)RebarBeamMainBarLevelType.RebarTop : sectionActive.RebarBeamTop.RebarBeamTopLevel3.RebarLevelType;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarGroupType = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel3 : sectionActive.RebarBeamTop.RebarBeamTopLevel3.RebarGroupType;
+            rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3.RebarBeamType = (int)RebarBeamType.RebarBeamMainBar;
+
+            rebarBeamSection.RebarBeamTop.RebarGroupTypeActive = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel1 : sectionActive.RebarBeamTop.RebarGroupTypeActive;
+            switch (rebarBeamSection.RebarBeamTop.RebarGroupTypeActive)
+            {
+                case (int)RebarBeamMainBarGroupType.GroupLevel1:
+                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevelActive = rebarBeamSection.RebarBeamTop.RebarBeamTopLevel1;
+                    break;
+                case (int)RebarBeamMainBarGroupType.GroupLevel2:
+                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevelActive = rebarBeamSection.RebarBeamTop.RebarBeamTopLevel2;
+                    break;
+                case (int)RebarBeamMainBarGroupType.GroupLevel3:
+                    rebarBeamSection.RebarBeamTop.RebarBeamTopLevelActive = rebarBeamSection.RebarBeamTop.RebarBeamTopLevel3;
+                    break;
+            }
             rebarBeamSection.RebarBeamTop.RebarGroupTypeChange = () =>
             {
-                RebarBeamTop.TopRebarGroupTypeChangeFunc(rebarBeamSection.RebarBeamTop);
+                RebarBeamTop.TopRebarLeveTypeChangeFunc(rebarBeamSection.RebarBeamTop);
             };
 
-            if(rebarBeamSection.RebarBeamBot == null)
-            {
-                rebarBeamSection.RebarBeamBot = new RebarBeamBot();
-                if (rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1 == null)
-                {
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1 = new RebarBeamMainBar();
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.Diameter = RebarDiameters.FirstOrDefault();
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.Quantity = 3;
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarBeamType = 0;
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarBot;
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel1;
-                }
-                if(rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2 == null)
-                {
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2 = new RebarBeamMainBar();
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.Diameter = RebarDiameters.FirstOrDefault();
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.Quantity = 3;
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarBeamType = 0;
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarBot;
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel2;
-                }
-
-                if (rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3 == null)
-                {
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3 = new RebarBeamMainBar();
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.Diameter = RebarDiameters.FirstOrDefault();
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.Quantity = 3;
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarBeamType = 0;
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarLevelType = (int)RebarBeamMainBarLevelType.RebarBot;
-                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarGroupType = (int)RebarBeamMainBarGroupType.GroupLevel2;
-                }
-            }
+            rebarBeamSection.RebarBeamBot = new RebarBeamBot();
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1 = new RebarBeamMainBar();
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.HostId = rebarBeam.BeamId;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.Diameter = sectionActive == null ? RebarDiameters.FirstOrDefault() : sectionActive.RebarBeamBot.RebarBeamBotLevel1.Diameter;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.Quantity = sectionActive == null ? 3 : sectionActive.RebarBeamBot.RebarBeamBotLevel1.Quantity;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarBeamType = sectionActive == null ? 0 : sectionActive.RebarBeamBot.RebarBeamBotLevel1.RebarBeamType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarLevelType = sectionActive == null ? (int)RebarBeamMainBarLevelType.RebarBot : sectionActive.RebarBeamBot.RebarBeamBotLevel1.RebarLevelType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarGroupType = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel1 : sectionActive.RebarBeamBot.RebarBeamBotLevel1.RebarGroupType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1.RebarBeamType = (int)RebarBeamType.RebarBeamMainBar;
+
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2 = new RebarBeamMainBar();
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.HostId = rebarBeam.BeamId;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.Diameter = sectionActive == null ? RebarDiameters.FirstOrDefault() : sectionActive.RebarBeamBot.RebarBeamBotLevel2.Diameter;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.Quantity = sectionActive == null ? 3 : sectionActive.RebarBeamBot.RebarBeamBotLevel2.Quantity;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarBeamType = sectionActive == null ? 0 : sectionActive.RebarBeamBot.RebarBeamBotLevel2.RebarBeamType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarLevelType = sectionActive == null ? (int)RebarBeamMainBarLevelType.RebarBot : sectionActive.RebarBeamBot.RebarBeamBotLevel2.RebarLevelType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarGroupType = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel2 : sectionActive.RebarBeamBot.RebarBeamBotLevel2.RebarGroupType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2.RebarBeamType = (int)RebarBeamType.RebarBeamMainBar;
+
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3 = new RebarBeamMainBar();
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.HostId = rebarBeam.BeamId;
-            rebarBeamSection.RebarBeamBot.RebarGroupTypeActive = (int)RebarBeamMainBarGroupType.GroupLevel1;
-            rebarBeamSection.RebarBeamBot.RebarBeamBotLevelActive = rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.Diameter = sectionActive == null ? RebarDiameters.FirstOrDefault() : sectionActive.RebarBeamBot.RebarBeamBotLevel3.Diameter;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.Quantity = sectionActive == null ? 3 : sectionActive.RebarBeamBot.RebarBeamBotLevel3.Quantity;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarBeamType = sectionActive == null ? 0 : sectionActive.RebarBeamBot.RebarBeamBotLevel3.RebarBeamType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarLevelType = sectionActive == null ? (int)RebarBeamMainBarLevelType.RebarBot : sectionActive.RebarBeamBot.RebarBeamBotLevel3.RebarLevelType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarGroupType = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel2 : sectionActive.RebarBeamBot.RebarBeamBotLevel3.RebarGroupType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarBeamType = (int)RebarBeamType.RebarBeamMainBar;
+
+            rebarBeamSection.RebarBeamBot.RebarGroupTypeActive = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel1 : sectionActive.RebarBeamBot.RebarGroupTypeActive;
+            switch (rebarBeamSection.RebarBeamBot.RebarGroupTypeActive)
+            {
+                case (int)RebarBeamMainBarGroupType.GroupLevel1:
+                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevelActive = rebarBeamSection.RebarBeamBot.RebarBeamBotLevel1;
+                    break;
+                case (int)RebarBeamMainBarGroupType.GroupLevel2:
+                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevelActive = rebarBeamSection.RebarBeamBot.RebarBeamBotLevel2;
+                    break;
+                case (int)RebarBeamMainBarGroupType.GroupLevel3:
+                    rebarBeamSection.RebarBeamBot.RebarBeamBotLevelActive = rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3;
+                    break;
+            }
             rebarBeamSection.RebarBeamBot.RebarGroupTypeChange = () =>
             {
                 RebarBeamBot.BotRebarGroupTypeChangeFunc(rebarBeamSection.RebarBeamBot);

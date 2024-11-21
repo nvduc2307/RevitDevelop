@@ -46,32 +46,46 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
         {
             RebarBeam.ResetActionChange(ElementInstances.RebarBeamActive);
             ElementInstances.RebarBeamActive.NameType = ElementInstances.RebarBeamTypeSelected.NameType;
-            var rebarBeamTypes = _rebarBeamTypeService.Save(ElementInstances.RebarBeamTypes, ElementInstances.RebarBeamActive, ElementInstances.PathRebarBeamType);
-            ElementInstances.RebarBeamTypes = rebarBeamTypes;
+            _rebarBeamTypeService.Save(ElementInstances.RebarBeamTypes, ElementInstances.RebarBeamActive, ElementInstances.PathRebarBeamType);
             InitAction();
+            ElementInstances.RebarBeamTypes = JsonConvert.DeserializeObject<List<RebarBeam>>(File.ReadAllText(ElementInstances.PathRebarBeamType));
             ElementInstances.RebarBeamTypeSelected = ElementInstances.RebarBeamTypes.FirstOrDefault(x=>x.NameType == ElementInstances.RebarBeamActive.NameType) 
                 ?? ElementInstances.RebarBeamTypes.FirstOrDefault();
         }
         [RelayCommand]
         private void Delete()
         {
-            var rebarBeamTypes = _rebarBeamTypeService.Delete(
-                ElementInstances.RebarBeamTypes,
-                ElementInstances.RebarBeamTypeSelected.NameType,
-                ElementInstances.PathRebarBeamType);
-            ElementInstances.RebarBeamTypes = rebarBeamTypes;
-            InitAction();
-            ElementInstances.RebarBeamTypeSelected = ElementInstances.RebarBeamTypes.FirstOrDefault();
+            try
+            {
+                _rebarBeamTypeService.Delete(
+                    ElementInstances.RebarBeamTypes,
+                    ElementInstances.RebarBeamTypeSelected.NameType,
+                    ElementInstances.PathRebarBeamType);
+                ElementInstances.RebarBeamTypes = JsonConvert.DeserializeObject<List<RebarBeam>>(File.ReadAllText(ElementInstances.PathRebarBeamType));
+                ElementInstances.RebarBeamTypeSelected = ElementInstances.RebarBeamTypes.FirstOrDefault();
+            }
+            catch (Exception)
+            {
+
+            }
         }
         [RelayCommand]
         private void SaveAs()
         {
-            var rebarBeamType = _rebarBeamTypeService.SaveAs(
-                ElementInstances.RebarBeamTypes, 
-                ElementInstances.RebarBeamTypeName,
-                ElementInstances.PathRebarBeamType);
-            ElementInstances.RebarBeamTypeSelected = rebarBeamType;
-            ElementInstances.RebarBeamTypeName = string.Empty;
+            try
+            {
+                _rebarBeamTypeService.SaveAs(
+                    ElementInstances.RebarBeamTypes, 
+                    ElementInstances.RebarBeamTypeName,
+                    ElementInstances.PathRebarBeamType);
+                ElementInstances.RebarBeamTypeName = string.Empty;
+
+                ElementInstances.RebarBeamTypes = JsonConvert.DeserializeObject<List<RebarBeam>>(File.ReadAllText(ElementInstances.PathRebarBeamType));
+                ElementInstances.RebarBeamTypeSelected = ElementInstances.RebarBeamTypes.LastOrDefault();
+            }
+            catch (Exception)
+            {
+            }
         }
         [RelayCommand]
         private void OK()
