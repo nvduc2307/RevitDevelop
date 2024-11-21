@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
-using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.views;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
@@ -35,11 +33,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
         [RelayCommand]
         private void Apply()
         {
-            _rebarBeamTypeService.Apply(ElementInstances);
-            InitAction();
-            ElementInstances.MainRebarTopUIElement = _drawRebarBeamInCanvasSerice.DrawSectionBeamMainBarTop(ElementInstances.RebarBeamActive, this);
-            ElementInstances.MainRebarBotUIElement = _drawRebarBeamInCanvasSerice.DrawSectionBeamMainBarBot(ElementInstances.RebarBeamActive, this);
-            ElementInstances.SideBarUIElement = _drawRebarBeamInCanvasSerice.DrawSectionBeamSideBar(ElementInstances.RebarBeamActive, this);
+
         }
         [RelayCommand]
         private void Save()

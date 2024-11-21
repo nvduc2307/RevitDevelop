@@ -1,6 +1,4 @@
-﻿using Autodesk.Revit.DB.Structure;
-using Autodesk.Revit.UI;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
 using System.IO;
@@ -17,9 +15,6 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                 if (elementInstances.RebarBeamTypeSelected.RebarBeamSectionStart == null) throw new Exception("Khong co du lieu, vui long setting va luu du lieu truoc khi apply");
                 if (elementInstances.RebarBeamTypeSelected.RebarBeamSectionMid == null) throw new Exception("Khong co du lieu, vui long setting va luu du lieu truoc khi apply");
                 if (elementInstances.RebarBeamTypeSelected.RebarBeamSectionEnd == null) throw new Exception("Khong co du lieu, vui long setting va luu du lieu truoc khi apply");
-                elementInstances.RebarBeams = elementInstances.Beam.ElementSubs?.Select(x => new RebarBeam(x)).ToList();
-                elementInstances.InitDataRebarBeam();
-                elementInstances.RebarBeamActive = elementInstances.RebarBeams.FirstOrDefault();
             }
             catch (Exception ex)
             {

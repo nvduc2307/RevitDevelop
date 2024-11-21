@@ -15,7 +15,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
     public partial class ElementInstances : ObservableObject
     {
         public static string DIR_TOOL = $"{PathInWindow.AppDataRimT}\\CreateRebarBeam";
-        public string PathRebarBeamType {  get; set; }
+        public string PathRebarBeamType { get; set; }
         public double DistanceRebarToRebarMm { get; set; }
         public RevElement Beam { get; set; }
         public List<RebarBarTypeCustom> RebarBarTypeCustoms { get; set; }
@@ -74,7 +74,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
                 InitDataRebarBeamSection(rebarBeam, rebarBeam.RebarBeamSectionEnd);
             }
         }
-        private void InitDataRebarBeamSection(RebarBeam rebarBeam, RebarBeamSection rebarBeamSection)
+        private void InitDataRebarBeamSection(RebarBeam rebarBeam, RebarBeamSection rebarBeamSection, RebarBeamSection rebarBeamSectionActive)
         {
             RebarBeamSection sectionActive = null;
             switch (rebarBeamSection.RebarBeamSectionType)
