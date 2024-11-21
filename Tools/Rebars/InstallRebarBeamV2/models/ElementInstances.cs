@@ -74,7 +74,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
                 InitDataRebarBeamSection(rebarBeam, rebarBeam.RebarBeamSectionEnd);
             }
         }
-        private void InitDataRebarBeamSection(RebarBeam rebarBeam, RebarBeamSection rebarBeamSection, RebarBeamSection rebarBeamSectionActive)
+        private void InitDataRebarBeamSection(RebarBeam rebarBeam, RebarBeamSection rebarBeamSection)
         {
             RebarBeamSection sectionActive = null;
             switch (rebarBeamSection.RebarBeamSectionType)
@@ -173,7 +173,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.Quantity = sectionActive == null ? 3 : sectionActive.RebarBeamBot.RebarBeamBotLevel3.Quantity;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarBeamType = sectionActive == null ? 0 : sectionActive.RebarBeamBot.RebarBeamBotLevel3.RebarBeamType;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarLevelType = sectionActive == null ? (int)RebarBeamMainBarLevelType.RebarBot : sectionActive.RebarBeamBot.RebarBeamBotLevel3.RebarLevelType;
-            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarGroupType = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel2 : sectionActive.RebarBeamBot.RebarBeamBotLevel3.RebarGroupType;
+            rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarGroupType = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel3 : sectionActive.RebarBeamBot.RebarBeamBotLevel3.RebarGroupType;
             rebarBeamSection.RebarBeamBot.RebarBeamBotLevel3.RebarBeamType = (int)RebarBeamType.RebarBeamMainBar;
 
             rebarBeamSection.RebarBeamBot.RebarGroupTypeActive = sectionActive == null ? (int)RebarBeamMainBarGroupType.GroupLevel1 : sectionActive.RebarBeamBot.RebarGroupTypeActive;
