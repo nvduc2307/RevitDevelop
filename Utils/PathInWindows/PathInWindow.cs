@@ -22,9 +22,21 @@ namespace Utils.PathInWindows
                 return Path.GetDirectoryName(path);
             }
         }
+        public static string AppDataRimTFilterRebar
+        {
+            get => $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\RIMT\\Filter\\Rebar";
+        }
+        public static string AppDataRimTFilter
+        {
+            get => $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\RIMT\\Filter";
+        }
         public static string AppDataRimT
         {
             get => $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\RIMT";
+        }
+        public static string AppDataRimTData
+        {
+            get => $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\RIMT\\data";
         }
         public static string AppDataDirectory
         {
