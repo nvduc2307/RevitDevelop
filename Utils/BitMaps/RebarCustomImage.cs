@@ -2,7 +2,6 @@
 using HcBimUtils;
 using HcBimUtils.DocumentUtils;
 using RevitDevelop.Utils.RevElements.RevRebars;
-using RevitDevelop.Utils.RevReferences.RevRebars;
 using System.Drawing;
 using Utils.canvass;
 using Utils.Geometries;

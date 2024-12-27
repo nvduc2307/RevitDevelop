@@ -1,9 +1,12 @@
 ﻿using Autodesk.Revit.DB.Structure;
+using HcBimUtils;
 using HcBimUtils.DocumentUtils;
+using HcBimUtils.RebarUtils;
 using Newtonsoft.Json;
 using RevitDevelop.Utils.RevElementNumberings;
 using Utils.CompareElement;
 using Utils.Entities;
+using Utils.Geometries;
 
 namespace RevitDevelop.Utils.RevElements.RevRebars
 {
@@ -70,7 +73,6 @@ namespace RevitDevelop.Utils.RevElements.RevRebars
             }
             numberingRevitRebars = results.Count == 0 ? numberingRevitRebars : results.Aggregate((a, b) => a.Concat(b).ToList());
         }
-
         public static CompareRebar GetCompareRebar(OptionRebarNumbering OptionRebarNumbering)
         {
             var result = new CompareRebar(OptionRebarNumbering.Prefix.ToString());
@@ -112,6 +114,151 @@ namespace RevitDevelop.Utils.RevElements.RevRebars
                     break;
             }
             return result;
+        }
+        public static XYZ GetNormal(this Rebar rebar)
+        {
+            XYZ result = null;
+            try
+            {
+                result = rebar.GetShapeDrivenAccessor().Normal;
+            }
+            catch (Exception)
+            {
+            }
+            return result;
+        }
+        public static List<XYZ> GetRebarPoints(this Rebar rebar)
+        {
+            var result = new List<XYZ>();
+            try
+            {
+                var curves = rebar
+                    .GetCenterlineCurves(false, false, false, MultiplanarOption.IncludeOnlyPlanarCurves, 0);
+                foreach (var curve in curves)
+                {
+                    result.Add(curve.GetEndPoint(0));
+                    result.Add(curve.GetEndPoint(1));
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return result.Distinct(new ComparePoint()).ToList();
+        }
+        public static Rebar CreateRebarBaseOldRebar(this Rebar oldRebar, List<Curve> newCurves)
+        {
+            Rebar result = null;
+            try
+            {
+                var doc = oldRebar.Document;
+                var line_active = newCurves.First(x => x.Direction().DotProduct(XYZ.BasisZ).IsAlmostEqual(0));
+                var isLengthZero = newCurves.Any(x => x.Length.IsAlmostEqual(0));
+                if (!isLengthZero)
+                {
+                    var rebarStyle = oldRebar.GetRebarStyle();
+                    var rebarType = oldRebar.GetRebarBarType();
+                    RebarHookType startHookType = null;
+                    RebarHookType endHookType = null;
+                    var host = doc.GetElement(oldRebar.GetHostId());
+                    var vtNorm = oldRebar.GetNormal();
+                    var startHookOrien = oldRebar.GetHookOrientation(0);
+                    var EndHookOrien = oldRebar.GetHookOrientation(1);
+                    result = Rebar.CreateFromCurves(
+                            doc,
+                            rebarStyle,
+                            rebarType,
+                            startHookType,
+                            endHookType,
+                            host,
+                            vtNorm,
+                            newCurves,
+                            startHookOrien,
+                            EndHookOrien,
+                            true,
+                            true);
+                    if (doc.ActiveView is View3D view3d)
+                    {
+                        result.SetSolidRebar3DView(view3d);
+                        result.SetUnobscuredInView(view3d, true);
+                    };
+                }
+            }
+            catch (Exception) { }
+            return result;
+        }
+        public static List<Curve> GetLinesOrigin(Rebar rb)
+        {
+            var results = new List<Curve>();
+            try
+            {
+                var vty = rb.GetNormal();
+                var cs = rb
+                    .GetCenterlineCurves(true, false, false, MultiplanarOption.IncludeOnlyPlanarCurves, 0)
+                    .Where(x => x is Line)
+                    .ToList();
+                var cc = cs.Count;
+                if (cc == 0) return results;
+                if (cc == 1) return results.Concat(cs).ToList();
+                var p1 = cs[0].GetEndPoint(0);
+                var p2Last = cs[cc - 1].GetEndPoint(1);
+                for (var i = 0; i < cc; i++)
+                {
+                    if (i == cc - 1)
+                    {
+                        var l = Line.CreateBound(p1, p2Last);
+                        results.Add(l);
+                    }
+                    else
+                    {
+                        var j = i + 1;
+                        var vtx = cs[i].Direction();
+                        var vtz = vtx.CrossProduct(vty);
+                        var f = new FaceCustom(vtz, cs[i].Midpoint());
+                        var p2 = cs[j].Midpoint().RayPointToFace(cs[j].Direction(), f);
+                        var l = Line.CreateBound(p1, p2);
+                        results.Add(l);
+                        p1 = p2;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return results;
+        }
+        public static List<Curve> GetCurvesOrgin(Rebar rb)
+        {
+            var results = new List<Curve>();
+            try
+            {
+                results = rb.GetCenterlineCurves(true, false, false, MultiplanarOption.IncludeOnlyPlanarCurves, 0).ToList();
+            }
+            catch (Exception)
+            {
+            }
+            return results;
+        }
+        public static void SetSolidRebar3DView(this Rebar rebar, Autodesk.Revit.DB.View view)
+        {
+            if (rebar != null)
+            {
+                View3D view3D = view as View3D;
+#if R21 || R22
+                if (view3D != null)
+                {
+                    rebar.SetSolidInView(view3D, solid: true);
+                }
+#endif
+            }
+        }
+        public static double GetBarDiameter(this Rebar rebar)
+        {
+
+#if (R21 || R20)
+         return rebar.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble();
+#else
+            return rebar.get_Parameter(BuiltInParameter.REBAR_MODEL_BAR_DIAMETER).AsDouble();
+#endif
         }
     }
 }

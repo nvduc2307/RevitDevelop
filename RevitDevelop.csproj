@@ -42,6 +42,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Tools\Modifies\AutoCutRebarBeamV2\imgs\Couplers.png" />
+      <None Remove="Tools\Modifies\AutoCutRebarBeamV2\imgs\LapLength.png" />
+      <None Remove="Tools\Modifies\AutoCutRebarBeamV2\imgs\Welds.png" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Chuongmep.Acad.Api.accoremgd" Version="2024.0.1" />
         <PackageReference Include="Chuongmep.Acad.Api.AcCui" Version="2024.0.1" />
         <PackageReference Include="Chuongmep.Acad.Api.acdbmgd" Version="2024.0.1" />
@@ -63,9 +69,13 @@
     <ItemGroup>
         <Resource Include="Resources\Icons\RibbonIcon16.png" />
         <Resource Include="Resources\Icons\RibbonIcon32.png" />
+        <Resource Include="Tools\Modifies\AutoCutRebarBeamV2\imgs\Couplers.png" />
+        <Resource Include="Tools\Modifies\AutoCutRebarBeamV2\imgs\LapLength.png" />
+        <Resource Include="Tools\Modifies\AutoCutRebarBeamV2\imgs\Welds.png" />
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Tools\Modifies\AutoCutRebarBeamV2\langs\" />
       <Folder Include="Tools\Rebars\SettingRuleRebarStandards\" />
       <Folder Include="Tools\Schedules\CreateRebarSchedule\" />
       <Folder Include="Tools\Concretes\" />
@@ -83,6 +93,16 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>CreateGridView.resx</DependentUpon>
       </Compile>
+      <Compile Update="Properties\SchemaInfo.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>SchemaInfo.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Properties\Langs\AutoCutRebarBeamV2.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AutoCutRebarBeamV2.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -99,6 +119,17 @@
       <EmbeddedResource Update="Properties\Langs\CreateGridView.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>CreateGridView.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Properties\SchemaInfo.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>SchemaInfo.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Properties\Langs\AutoCutRebarBeamV2.ja-JP.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Properties\Langs\AutoCutRebarBeamV2.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>AutoCutRebarBeamV2.Designer.cs</LastGenOutput>
       </EmbeddedResource>
     </ItemGroup>
 

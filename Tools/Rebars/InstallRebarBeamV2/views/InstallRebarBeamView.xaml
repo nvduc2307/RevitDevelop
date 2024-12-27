@@ -58,7 +58,13 @@
                 GroupName="menuTab"
                 Foreground="{StaticResource Color_Text1}"
                 HorizontalContentAlignment="Left" 
-                Content="Setting Cut Rebar" 
+                Content="Setting Anchor" 
+                Style="{StaticResource RadioBoxPrimary}"/>
+            <RadioButton 
+                GroupName="menuTab"
+                Foreground="{StaticResource Color_Text1}"
+                HorizontalContentAlignment="Left" 
+                Content="Setting Beam" 
                 Style="{StaticResource RadioBoxPrimary}"/>
         </StackPanel>
         <StackPanel Margin="10" Grid.Column="1">

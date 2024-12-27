@@ -28,7 +28,7 @@ namespace Utils.RevPoints
             return r;
         }
 
-        public static XYZ GetCenter(this List<XYZ> points)
+        public static XYZ CenterPoint(this List<XYZ> points)
         {
             var x = points.Select(a => a.X).ToList();
             var y = points.Select(a => a.Y).ToList();
@@ -46,7 +46,7 @@ namespace Utils.RevPoints
             {
                 try
                 {
-                    var paths = rebar.GetCenterlineCurves(true, true, false, MultiplanarOption.IncludeAllMultiplanarCurves, 0);
+                    var paths = rebar.GetCenterlineCurves(true, false, false, MultiplanarOption.IncludeAllMultiplanarCurves, 0);
                     foreach (var curve in paths)
                     {
                         results.Add(curve.GetEndPoint(0));
@@ -82,18 +82,27 @@ namespace Utils.RevPoints
             return results;
         }
 
-        public static List<Curve> PointsToCurves(this List<XYZ> points)
+        public static List<Curve> PointsToCurves(this List<XYZ> points, bool isClose = false)
         {
             var curves = new List<Curve>();
-
-            for (int i = 0; i < points.Count - 1; i++)
+            var pc = points.Count;
+            for (int i = 0; i < pc; i++)
             {
-                var sp = points[i];
-                var ep = points[i + 1];
-
-                curves.Add(sp.CreateLine(ep));
+                if (isClose)
+                {
+                    var j = i == 0 ? pc - 1 : i - 1;
+                    curves.Add(points[j].CreateLine(points[i]));
+                }
+                else
+                {
+                    if (i < pc - 1)
+                    {
+                        var sp = points[i];
+                        var ep = points[i + 1];
+                        curves.Add(sp.CreateLine(ep));
+                    }
+                }
             }
-
             return curves;
         }
     }

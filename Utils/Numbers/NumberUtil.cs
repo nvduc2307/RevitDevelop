@@ -9,6 +9,13 @@ namespace Utils.NumberUtils
             var resultString = Regex.Match(text, @"\d+").Value;
             return !string.IsNullOrEmpty(resultString) ? int.Parse(resultString) : 0;
         }
+        public static int DivInterger(this double num1, double num2, out double du)
+        {
+            du = num1 % num2;
+            var per = du * 100 / num2;
+            var n = int.Parse(Math.Round((num1 - du) / num2, 0).ToString(), System.Globalization.NumberStyles.Integer);
+            return per <= 20 ? n : n + 1;
+        }
         public static int SolveNumber(this double num, double spacing)
         {
             var d = num % spacing;

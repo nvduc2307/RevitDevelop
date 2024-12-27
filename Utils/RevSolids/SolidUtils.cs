@@ -1,4 +1,6 @@
 ﻿using HcBimUtils;
+using HcBimUtils.GeometryUtils.Geometry;
+using Utils.CompareElement;
 
 namespace Utils.RevSolids
 {
@@ -11,6 +13,30 @@ namespace Utils.RevSolids
             {
                 result = DirectShape.CreateElement(document, new ElementId(builtInCategory));
                 result.SetShape([solid]);
+            }
+            catch (Exception)
+            {
+            }
+            return result;
+        }
+        public static Solid CreateSolid(this XYZ pCenter, XYZ dir, double heightMm, double widthMm)
+        {
+            Solid result = null;
+            try
+            {
+                var vtx = dir;
+                var vty = vtx.IsParallel(XYZ.BasisZ)
+                    ? vtx.CrossProduct(XYZ.BasisX)
+                    : vtx.CrossProduct(XYZ.BasisZ);
+                var vtz = vtx.CrossProduct(vty);
+
+                var p1 = pCenter - vtx * widthMm.MmToFoot() / 2 - vty * heightMm.MmToFoot() / 2 - vtz * heightMm.MmToFoot() / 2;
+                var p2 = p1 + vty * heightMm.MmToFoot();
+                var p3 = p2 + vtx * widthMm.MmToFoot();
+                var p4 = p3 - vty * heightMm.MmToFoot();
+
+                var ps = new List<XYZ>() { p1, p2, p3, p4 };
+                result = ps.CreateSolid(vtz, heightMm);
             }
             catch (Exception)
             {
@@ -63,44 +89,101 @@ namespace Utils.RevSolids
             }
             return result;
         }
-        private static Solid UnionSolid(Solid source, List<Solid> solids)
+        public static List<XYZ> GetPoints(this Solid solid)
         {
-            if (source == null) return null;
-            if (solids == null || solids.Count == 0) return source;
-            Solid result = source;
-            Solid sl1 = null;
-
-            foreach (var sl in solids)
+            var result = new List<XYZ>();
+            try
             {
-                if (sl == null) continue;
-                try
-                {
-                    sl1 = BooleanOperationsUtils.ExecuteBooleanOperation(result, sl, BooleanOperationsType.Union);
-                }
-                catch
-                {
-                }
-                if (sl1 != null)
-                {
-                    result = sl1;
-                }
+                result = solid
+                .GetFacesFromSolid()
+                .Select(x => x.GetPoints())
+                .Aggregate((a, b) => a.Concat(b)
+                .Distinct(new ComparePoint())
+                .ToList());
             }
+            catch (Exception)
+            {
 
+            }
             return result;
         }
-        public static Solid CreateSolidFromCurveLoops(CurveLoop mainLoop, List<CurveLoop> loops, double height)
+        public static BoundingBoxXYZ GetBoundingBoxXYZ(this Solid solid)
         {
-            XYZ vertical = (height >= 0 ? 1 : -1) * XYZ.BasisZ;
-            double h = Math.Abs(height);
-
-            var mainSolid = GeometryCreationUtilities.CreateExtrusionGeometry(new List<CurveLoop>() { mainLoop }, vertical, h);
-            var subSolids = loops.Select(x => GeometryCreationUtilities.CreateExtrusionGeometry(new List<CurveLoop>() { x }, vertical, h));
-            Solid solid = mainSolid;
-            foreach (var sl in subSolids)
+            var result = new BoundingBoxXYZ();
+            try
             {
-                solid = BooleanOperationsUtils.ExecuteBooleanOperation(solid, sl, BooleanOperationsType.Difference);
+                var ps = solid.GetPoints();
+                var minx = ps.Min(x => x.X);
+                var miny = ps.Min(x => x.Y);
+                var minz = ps.Min(x => x.Z);
+                var maxx = ps.Max(x => x.X);
+                var maxy = ps.Max(x => x.Y);
+                var maxz = ps.Max(x => x.Z);
+                result.Min = new XYZ(minx, miny, minz);
+                result.Max = new XYZ(maxx, maxy, maxz);
             }
-            return solid;
+            catch (Exception)
+            {
+                result = null;
+            }
+            return result;
+        }
+        public static Solid OffsetSolid(this Solid solid, double offsetMm)
+        {
+            var result = solid;
+            try
+            {
+                var boundingBoxXyz = solid.GetBoundingBoxXYZ();
+                if (boundingBoxXyz == null) throw new Exception();
+                var outline = new Outline(new XYZ(boundingBoxXyz.Min.X - offsetMm.MmToFoot(), boundingBoxXyz.Min.Y - offsetMm.MmToFoot(), boundingBoxXyz.Min.Z - offsetMm.MmToFoot()),
+                    new XYZ(boundingBoxXyz.Max.X + offsetMm.MmToFoot(), boundingBoxXyz.Max.Y + offsetMm.MmToFoot(), boundingBoxXyz.Max.Z + offsetMm.MmToFoot()));
+
+                var slbox = new BoundingBoxXYZ();
+                slbox.Min = outline.MinimumPoint;
+                slbox.Max = outline.MaximumPoint;
+                result = slbox.SolidFromBoundingbox();
+            }
+            catch (Exception)
+            {
+                result = solid;
+            }
+            return result;
+        }
+        public static List<Solid> GetSolidsExtensions(this Element element)
+        {
+            var result = new List<Solid>();
+            try
+            {
+                var document = element.Document;
+                if (element is AssemblyInstance ass)
+                {
+                    var solids = ass
+                        .GetMemberIds()
+                        .Select(x =>
+                        {
+                            var sls = new List<Solid>();
+                            try
+                            {
+                                sls = document.GetElement(x).GetSolids();
+                            }
+                            catch (Exception)
+                            {
+                            }
+                            return sls;
+                        })
+                        .Aggregate((a, b) => a.Concat(b).ToList());
+                    if (solids.Any()) result.AddRange(solids);
+                }
+                else
+                {
+                    var solids = element.GetSolids();
+                    if (solids.Any()) result.AddRange(solids);
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return result;
         }
     }
 }

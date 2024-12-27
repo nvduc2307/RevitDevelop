@@ -171,26 +171,5 @@ namespace Utils.Geometries
             catch { }
             return r;
         }
-        public static bool IsCounterClockWise(this List<XYZ> polygons)
-        {
-            bool r = false;
-            double sum = 0;
-            for (int i = 0; i < polygons.Count - 1; i++)
-            {
-                var x1 = polygons[i].X;
-                var x2 = polygons[i + 1].X;
-                var y1 = polygons[i].Y;
-                var y2 = polygons[i + 1].Y;
-                sum += (x2 - x1) * (y2 + y1);
-            }
-            var sp = polygons[0];
-            var ep = polygons[polygons.Count - 1];
-            sum += (sp.X - ep.X) * (sp.Y + ep.Y);
-            if (sum < 0)
-            {
-                r = true;
-            }
-            return r;
-        }
     }
 }

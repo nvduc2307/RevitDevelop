@@ -15,7 +15,6 @@ namespace Utils.Entities
             SchemaField = schemaField;
             SchemaBase = CreateBaseSchema(SchemaGuidID, SchemaName, SchemaField);
         }
-
         public static Schema CreateBaseSchema(string schemaGuidID, string schemaName, SchemaField schemaField)
         {
             var schemaBuilder = new SchemaBuilder(new Guid(schemaGuidID));
@@ -29,9 +28,28 @@ namespace Utils.Entities
 
         public static Schema Write(Schema schemaBase, Element element, SchemaField schemaField)
         {
+            try
+            {
+                if (element == null) return null;
+                var entity = new Entity(schemaBase);
+                var field = schemaBase.GetField(schemaField.Name);
+                entity.Set(field, schemaField.Value);
+                element.SetEntity(entity); // store the entity in the element
+            }
+            catch (Exception)
+            {
+            }
+            return schemaBase;
+        }
+
+        public static Schema Write(Schema schemaBase, Element element, Dictionary<string, string> pairs)
+        {
             var entity = new Entity(schemaBase);
-            var field = schemaBase.GetField(schemaField.Name);
-            entity.Set(field, schemaField.Value);
+            foreach (var pair in pairs)
+            {
+                var field = schemaBase.GetField(pair.Key);
+                entity.Set(field, pair.Value);
+            }
             element.SetEntity(entity); // store the entity in the element
             return schemaBase;
         }
@@ -48,6 +66,50 @@ namespace Utils.Entities
             if (entity != null && entity.IsValid())
                 views = entity.Get<string>(field);
             return views;
+        }
+
+        public static Dictionary<string, string> ReadAll(Schema schemaBase, List<string> schemaBaseKeys, Element element)
+        {
+            var resultDict = new Dictionary<string, string>();
+            if (schemaBase == null)
+            {
+                return resultDict;
+            }
+            foreach (var schemaAddField in schemaBaseKeys)
+            {
+                resultDict.Add(schemaAddField, "");
+                var field = schemaBase.GetField(schemaAddField);
+                if (field == null) continue;
+
+                var entity = element?.GetEntity(schemaBase);
+                if (entity != null && entity.IsValid())
+                {
+                    resultDict[schemaAddField] = entity.Get<string>(field);
+                }
+            }
+            return resultDict;
+        }
+
+        public static SchemaField ReadAll(Schema schemaBase, SchemaField schemaField, Element element)
+        {
+            SchemaField results = null;
+            if (schemaBase != null)
+            {
+                var field = schemaBase.GetField(schemaField.Name);
+                if (field != null)
+                {
+                    var entity = element?.GetEntity(schemaBase);
+                    if (entity != null && entity.IsValid())
+                    {
+                        results = new SchemaField()
+                        {
+                            Name = schemaField.Name,
+                            Value = entity.Get<string>(field),
+                        };
+                    }
+                }
+            }
+            return results;
         }
     }
 }

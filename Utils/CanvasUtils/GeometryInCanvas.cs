@@ -1,4 +1,5 @@
-﻿using Utils.Messages;
+﻿using HcBimUtils;
+using Utils.Messages;
 using PointCanvas = System.Windows.Point;
 using VectorCanvas = System.Windows.Vector;
 
@@ -6,14 +7,13 @@ namespace Utils.canvass
 {
     public static class GeometryInCanvas
     {
-        public static double DistanceTo(this PointCanvas p1, PointCanvas p2)
-        {
-            var vt = p1.GetVector(p2);
-            return vt.VtDistance();
-        }
         public static double VtDistance(this PointCanvas p)
         {
             return Math.Sqrt(p.X * p.X + p.Y * p.Y);
+        }
+        public static PointCanvas Vt(this PointCanvas p1, PointCanvas p2)
+        {
+            return new PointCanvas(p2.X - p1.X, p2.Y - p1.Y);
         }
         public static PointCanvas VtNormal(this PointCanvas p)
         {
@@ -23,6 +23,22 @@ namespace Utils.canvass
         public static PointCanvas GetVector(this PointCanvas p1, PointCanvas p2)
         {
             return new PointCanvas(p2.X - p1.X, p2.Y - p1.Y);
+        }
+        public static IEnumerable<PointCanvas> ConvertPoint(this IEnumerable<XYZ> points, double canvasScale)
+        {
+            var result = new List<PointCanvas>();
+            if (points.Count() > 0)
+            {
+                foreach (var point in points)
+                {
+                    result.Add(point.ConvertPoint(canvasScale));
+                }
+            }
+            return result;
+        }
+        public static PointCanvas ConvertPoint(this XYZ point, double canvasScale)
+        {
+            return new PointCanvas(point.X.FootToMm() * canvasScale, -point.Y.FootToMm() * canvasScale);
         }
         public static PointCanvas Rotate(this PointCanvas p, PointCanvas c, double angle)
         {
@@ -48,16 +64,20 @@ namespace Utils.canvass
             var pn = p.Rotate(c, angle);
             return pn.Translate(vt);
         }
-        public static PointCanvas ConvertPointRToC(this XYZ p, XYZ centerRevit, CanvasPageBase canvasPageBase)
+        public static PointCanvas ConvertPointRToC(this XYZ p, XYZ centerRevit, CanvasPageBase canvasPageBase, PointCanvas originInCanvas = new PointCanvas())
         {
-            var centerCanvas = canvasPageBase.Center;
+            var centerCanvas = originInCanvas.X == 0 && originInCanvas.Y == 0
+                ? canvasPageBase.Center
+                : originInCanvas;
             var scale = canvasPageBase.Scale;
+            var scaleX = canvasPageBase.ScaleX;
+            var scaleY = canvasPageBase.ScaleY;
             var result = new PointCanvas();
             try
             {
-                var centerObj = new PointCanvas(centerRevit.X * scale, -centerRevit.Y * scale);
+                var centerObj = new PointCanvas(centerRevit.X * scaleX, -centerRevit.Y * scaleY);
                 var vtMove = new VectorCanvas(centerCanvas.X - centerObj.X, centerCanvas.Y - centerObj.Y);
-                result = new PointCanvas(p.X * scale + vtMove.X, -p.Y * scale + vtMove.Y);
+                result = new PointCanvas(p.X * scaleX + vtMove.X, -p.Y * scaleY + vtMove.Y);
             }
             catch (Exception)
             {
@@ -68,12 +88,14 @@ namespace Utils.canvass
         {
             var centerCanvas = canvasPageBase.Center;
             var scale = canvasPageBase.Scale;
+            var scaleX = canvasPageBase.ScaleX;
+            var scaleY = canvasPageBase.ScaleY;
             var result = new XYZ();
             try
             {
                 var centerObj = new PointCanvas(centerRevit.X, -centerRevit.Y);
-                var vtMove = new VectorCanvas(centerObj.X - centerCanvas.X / scale, centerObj.Y - centerCanvas.Y / scale);
-                var pRealInCanvas = new PointCanvas(p.X / scale + vtMove.X, p.Y / scale + vtMove.Y);
+                var vtMove = new VectorCanvas(centerObj.X - centerCanvas.X / scaleX, centerObj.Y - centerCanvas.Y / scaleY);
+                var pRealInCanvas = new PointCanvas(p.X / scaleX + vtMove.X, p.Y / scaleY + vtMove.Y);
                 result = new XYZ(pRealInCanvas.X, -pRealInCanvas.Y, 0);
             }
             catch (Exception)

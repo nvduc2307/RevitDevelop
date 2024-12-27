@@ -3,6 +3,7 @@ using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels;
 using RevitDevelop.Utils.RevElements.RevRebars;
+using RevitDevelop.Utils.Window2Ds;
 using System.Windows;
 using Utils.canvass;
 
@@ -383,7 +384,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                 int qty = 0;
                 int qtyHaft = 0;
                 RebarBeamSection section = null;
-                double distance = p1.DistanceTo(p4) - 50 * 6 * scale;
+                double distance = p1.Distance(p4) - 50 * 6 * scale;
                 double spacing = 0;
                 var midL = new System.Windows.Point((p1.X + p4.X) * 0.5, (p1.Y + p4.Y) * 0.5);
                 var midR = new System.Windows.Point((p2.X + p3.X) * 0.5, (p2.Y + p3.Y) * 0.5);
@@ -523,7 +524,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                 {
                                     case RebarBeamMainBarGroupType.GroupLevel1:
                                         qty = section.RebarBeamTop.RebarBeamTopLevel1.Quantity;
-                                        distance = p1.DistanceTo(p2);
+                                        distance = p1.Distance(p2);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -535,7 +536,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel2:
                                         qty = section.RebarBeamTop.RebarBeamTopLevel2.Quantity;
-                                        distance = p1.DistanceTo(p2);
+                                        distance = p1.Distance(p2);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -547,7 +548,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel3:
                                         qty = section.RebarBeamTop.RebarBeamTopLevel3.Quantity;
-                                        distance = p1.DistanceTo(p2);
+                                        distance = p1.Distance(p2);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -564,7 +565,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                 {
                                     case RebarBeamMainBarGroupType.GroupLevel1:
                                         qty = section.RebarBeamBot.RebarBeamBotLevel1.Quantity;
-                                        distance = p4.DistanceTo(p3);
+                                        distance = p4.Distance(p3);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -576,7 +577,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel2:
                                         qty = section.RebarBeamBot.RebarBeamBotLevel2.Quantity;
-                                        distance = p4.DistanceTo(p3);
+                                        distance = p4.Distance(p3);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -588,7 +589,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel3:
                                         qty = section.RebarBeamBot.RebarBeamBotLevel3.Quantity;
-                                        distance = p4.DistanceTo(p3);
+                                        distance = p4.Distance(p3);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -611,7 +612,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                 {
                                     case RebarBeamMainBarGroupType.GroupLevel1:
                                         qty = section.RebarBeamTop.RebarBeamTopLevel1.Quantity;
-                                        distance = p1.DistanceTo(p2);
+                                        distance = p1.Distance(p2);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -623,7 +624,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel2:
                                         qty = section.RebarBeamTop.RebarBeamTopLevel2.Quantity;
-                                        distance = p1.DistanceTo(p2);
+                                        distance = p1.Distance(p2);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -635,7 +636,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel3:
                                         qty = section.RebarBeamTop.RebarBeamTopLevel3.Quantity;
-                                        distance = p1.DistanceTo(p2);
+                                        distance = p1.Distance(p2);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -652,7 +653,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                 {
                                     case RebarBeamMainBarGroupType.GroupLevel1:
                                         qty = section.RebarBeamBot.RebarBeamBotLevel1.Quantity;
-                                        distance = p4.DistanceTo(p3);
+                                        distance = p4.Distance(p3);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -664,7 +665,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel2:
                                         qty = section.RebarBeamBot.RebarBeamBotLevel2.Quantity;
-                                        distance = p4.DistanceTo(p3);
+                                        distance = p4.Distance(p3);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -676,7 +677,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel3:
                                         qty = section.RebarBeamBot.RebarBeamBotLevel3.Quantity;
-                                        distance = p4.DistanceTo(p3);
+                                        distance = p4.Distance(p3);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -699,7 +700,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                 {
                                     case RebarBeamMainBarGroupType.GroupLevel1:
                                         qty = section.RebarBeamTop.RebarBeamTopLevel1.Quantity;
-                                        distance = p1.DistanceTo(p2);
+                                        distance = p1.Distance(p2);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -711,7 +712,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel2:
                                         qty = section.RebarBeamTop.RebarBeamTopLevel2.Quantity;
-                                        distance = p1.DistanceTo(p2);
+                                        distance = p1.Distance(p2);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -723,7 +724,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel3:
                                         qty = section.RebarBeamTop.RebarBeamTopLevel3.Quantity;
-                                        distance = p1.DistanceTo(p2);
+                                        distance = p1.Distance(p2);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -740,7 +741,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                 {
                                     case RebarBeamMainBarGroupType.GroupLevel1:
                                         qty = section.RebarBeamBot.RebarBeamBotLevel1.Quantity;
-                                        distance = p4.DistanceTo(p3);
+                                        distance = p4.Distance(p3);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -752,7 +753,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel2:
                                         qty = section.RebarBeamBot.RebarBeamBotLevel2.Quantity;
-                                        distance = p4.DistanceTo(p3);
+                                        distance = p4.Distance(p3);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
@@ -764,7 +765,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
                                         break;
                                     case RebarBeamMainBarGroupType.GroupLevel3:
                                         qty = section.RebarBeamBot.RebarBeamBotLevel3.Quantity;
-                                        distance = p4.DistanceTo(p3);
+                                        distance = p4.Distance(p3);
                                         spacing = distance / (qty - 1);
                                         for (int i = 0; i < qty; i++)
                                         {
