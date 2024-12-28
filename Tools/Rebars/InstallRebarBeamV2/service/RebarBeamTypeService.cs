@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
+using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels;
 using System.IO;
 using Utils.Messages;
 
@@ -8,13 +9,26 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
 {
     public class RebarBeamTypeService : IRebarBeamTypeService
     {
-        public void Apply(ElementInstances elementInstances)
+        private IDrawRebarBeamInCanvasSerice _drawRebarBeamInCanvasSerice;
+        public RebarBeamTypeService(
+            IDrawRebarBeamInCanvasSerice drawRebarBeamInCanvasSerice)
+        {
+            _drawRebarBeamInCanvasSerice = drawRebarBeamInCanvasSerice;
+        }
+        public void Apply(InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel)
         {
             try
             {
+                var elementInstances = installRebarBeamV2ViewModel.ElementInstances;
                 if (elementInstances.RebarBeamTypeSelected.RebarBeamSectionStart == null) throw new Exception("Khong co du lieu, vui long setting va luu du lieu truoc khi apply");
                 if (elementInstances.RebarBeamTypeSelected.RebarBeamSectionMid == null) throw new Exception("Khong co du lieu, vui long setting va luu du lieu truoc khi apply");
                 if (elementInstances.RebarBeamTypeSelected.RebarBeamSectionEnd == null) throw new Exception("Khong co du lieu, vui long setting va luu du lieu truoc khi apply");
+                elementInstances.RebarBeams = elementInstances.Beam.ElementSubs?.Select(x => new RebarBeam(x)).ToList();
+                elementInstances.InitDataRebarBeam();
+                elementInstances.RebarBeamActive = elementInstances.RebarBeams.FirstOrDefault();
+                elementInstances.MainRebarTopUIElement = _drawRebarBeamInCanvasSerice.DrawSectionBeamMainBarTop(elementInstances.RebarBeamActive, installRebarBeamV2ViewModel);
+                elementInstances.MainRebarBotUIElement = _drawRebarBeamInCanvasSerice.DrawSectionBeamMainBarBot(elementInstances.RebarBeamActive, installRebarBeamV2ViewModel);
+                elementInstances.SideBarUIElement = _drawRebarBeamInCanvasSerice.DrawSectionBeamSideBar(elementInstances.RebarBeamActive, installRebarBeamV2ViewModel);
             }
             catch (Exception ex)
             {

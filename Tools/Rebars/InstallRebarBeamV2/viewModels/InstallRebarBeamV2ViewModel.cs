@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
+using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.views;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using Utils.canvass;
 
@@ -33,7 +35,8 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
         [RelayCommand]
         private void Apply()
         {
-
+            _rebarBeamTypeService.Apply(this);
+            InitAction();
         }
         [RelayCommand]
         private void Save()
