@@ -20,11 +20,21 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
             var result = new List<Rebar>();
             var isQTYMatch = _installRebarBeamV2MiddleWare.RebarQuantityNotMatch(
                 installRebarBeamV2ViewModel,
-                RebarBeamMainBarLevelType.RebarTop,
+                RebarBeamMainBarLevelType.RebarBot,
                 RebarBeamMainBarGroupType.GroupLevel1);
             if (!isQTYMatch) throw new Exception_Rebar_Top_1_Quantity_Not_Match();
             try
             {
+                var cover = installRebarBeamV2ViewModel.ElementInstances.CoverMm;
+                var rebarBeams = installRebarBeamV2ViewModel.ElementInstances.RebarBeams;
+                var subBeams = installRebarBeamV2ViewModel.ElementInstances.Beam.ElementSubs;
+                var qRebarBeams = rebarBeams.Count;
+                var cRebarBeams = 0;
+                foreach (var b in rebarBeams)
+                {
+
+                    cRebarBeams ++;
+                }
             }
             catch (Exception ex)
             {
