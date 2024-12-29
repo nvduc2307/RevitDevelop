@@ -3,34 +3,40 @@ using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.views;
-using System.Diagnostics;
+using RevitDevelop.Utils.RevCurves;
 using System.IO;
-using System.Windows;
 using System.Windows.Controls;
 using Utils.canvass;
+using Utils.Messages;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
 {
     public partial class InstallRebarBeamV2ViewModel : ObservableObject
     {
+        private InstallRebarBeamV2Cmd _cmd;
+        private IRebarBeamTypeService _rebarBeamTypeService;
+        private IDrawRebarBeamInCanvasSerice _drawRebarBeamInCanvasSerice;
+        private IInstallRebarBeamInModelService _installRebarBeamInModelService;
         public ElementInstances ElementInstances { get; set; }
         public InstallRebarBeamView MainView { get; set; }
         public SettingRebarSection SettingRebarSection { get; set; }
         public CanvasPageBase CanvasPageSectionStart { get; set; }
         public CanvasPageBase CanvasPageSectionMid { get; set; }
         public CanvasPageBase CanvasPageSectionEnd { get; set; }
-        private IDrawRebarBeamInCanvasSerice _drawRebarBeamInCanvasSerice;
-        private IRebarBeamTypeService _rebarBeamTypeService;
         public InstallRebarBeamV2ViewModel(
+            InstallRebarBeamV2Cmd cmd,
             IDrawRebarBeamInCanvasSerice drawRebarBeamInCanvas,
-            IRebarBeamTypeService rebarBeamTypeService)
+            IRebarBeamTypeService rebarBeamTypeService,
+            IInstallRebarBeamInModelService installRebarBeamInModelService)
         {
+            _cmd = cmd;
+            _rebarBeamTypeService = rebarBeamTypeService;
+            _drawRebarBeamInCanvasSerice = drawRebarBeamInCanvas;
+            _installRebarBeamInModelService = installRebarBeamInModelService;
             ElementInstances = new ElementInstances();
             MainView = new InstallRebarBeamView() { DataContext = this };
             MainView.Loaded += MainView_Loaded;
             InitAction();
-            _drawRebarBeamInCanvasSerice = drawRebarBeamInCanvas;
-            _rebarBeamTypeService = rebarBeamTypeService;
         }
         [RelayCommand]
         private void Apply()
@@ -46,7 +52,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
             _rebarBeamTypeService.Save(ElementInstances.RebarBeamTypes, ElementInstances.RebarBeamActive, ElementInstances.PathRebarBeamType);
             InitAction();
             ElementInstances.RebarBeamTypes = JsonConvert.DeserializeObject<List<RebarBeam>>(File.ReadAllText(ElementInstances.PathRebarBeamType));
-            ElementInstances.RebarBeamTypeSelected = ElementInstances.RebarBeamTypes.FirstOrDefault(x=>x.NameType == ElementInstances.RebarBeamActive.NameType) 
+            ElementInstances.RebarBeamTypeSelected = ElementInstances.RebarBeamTypes.FirstOrDefault(x => x.NameType == ElementInstances.RebarBeamActive.NameType)
                 ?? ElementInstances.RebarBeamTypes.FirstOrDefault();
         }
         [RelayCommand]
@@ -72,7 +78,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
             try
             {
                 _rebarBeamTypeService.SaveAs(
-                    ElementInstances.RebarBeamTypes, 
+                    ElementInstances.RebarBeamTypes,
                     ElementInstances.RebarBeamTypeName,
                     ElementInstances.PathRebarBeamType);
                 ElementInstances.RebarBeamTypeName = string.Empty;
@@ -87,47 +93,22 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
         [RelayCommand]
         private void OK()
         {
-            var path = "C:\\Users\\HC - 09\\Desktop\\RebarBeam.json";
-            var content = File.ReadAllText(path);
-            var rebarBeam = JsonConvert.DeserializeObject<RebarBeam>(content);
-            ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel2.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel3.QuantityChange = null;
-
-            ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel1.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel2.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel3.QuantityChange = null;
-
-            ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel2.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel3.QuantityChange = null;
-
-            ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevel1.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevel2.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevel3.QuantityChange = null;
-
-            ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel2.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel3.QuantityChange = null;
-
-            ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel1.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel2.QuantityChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel3.QuantityChange = null;
-
-            ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamSideBar.QuantitySideChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamSideBar.QuantitySideChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamSideBar.QuantitySideChange = null;
-
-            ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamTop.RebarGroupTypeChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionStart.RebarBeamBot.RebarGroupTypeChange = null;
-
-            ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamTop.RebarGroupTypeChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamBot.RebarGroupTypeChange = null;
-
-            ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamTop.RebarGroupTypeChange = null;
-            ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamBot.RebarGroupTypeChange = null;
-            var content2 = JsonConvert.SerializeObject(ElementInstances.RebarBeamActive);
-            Debug.WriteLine(content2);
+            try
+            {
+                using (var ts = new Transaction(_cmd.Document, "name transaction"))
+                {
+                    ts.Start();
+                    //--------
+                    _installRebarBeamInModelService.InstallRebarBot1(this);
+                    //--------
+                    ts.Commit();
+                }
+                MainView.Close();
+            }
+            catch (Exception ex)
+            {
+                IO.ShowWarning(ex.Message);
+            }
         }
         private void MainView_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {

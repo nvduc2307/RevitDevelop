@@ -1,4 +1,5 @@
-﻿using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
+﻿using Autodesk.Revit.DB.Structure;
+using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels;
 using System.Windows;
 

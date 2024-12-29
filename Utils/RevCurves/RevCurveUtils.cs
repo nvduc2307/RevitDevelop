@@ -10,5 +10,20 @@ namespace RevitDevelop.Utils.RevCurves
             ps.Add(curves.Last().EP());
             return ps;
         }
+        public static  void CreateModelCurve(this Line line, Document document)
+        {
+            try
+            {
+                var nor = line.Direction.IsParallel(XYZ.BasisZ)
+                    ? line.Direction.CrossProduct(XYZ.BasisX)
+                    : line.Direction.CrossProduct(XYZ.BasisZ);
+                var plane = Plane.CreateByNormalAndOrigin(nor, line.Midpoint());
+                var sket = SketchPlane.Create(document, plane);
+                document.Create.NewModelCurve(line, sket);
+            }
+            catch (Exception)
+            {
+            }
+        }
     }
 }

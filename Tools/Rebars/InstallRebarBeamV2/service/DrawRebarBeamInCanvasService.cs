@@ -1,4 +1,5 @@
-﻿using HcBimUtils;
+﻿using Autodesk.Revit.DB.Structure;
+using HcBimUtils;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels;
@@ -11,9 +12,6 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service
 {
     public class DrawRebarBeamInCanvasSerice : IDrawRebarBeamInCanvasSerice
     {
-        public DrawRebarBeamInCanvasSerice()
-        {
-        }
         public void DrawSectionBeamConcrete(RebarBeam rebarBeam, InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel)
         {
             var canvasStart = installRebarBeamV2ViewModel.CanvasPageSectionStart;
