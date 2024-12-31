@@ -1,5 +1,5 @@
-﻿using Autodesk.Revit.DB.IFC;
-using HcBimUtils;
+﻿using HcBimUtils;
+using RevitDevelop.Utils.RevCurves;
 using Utils.CompareElement;
 using Utils.RevArcs;
 using Utils.RevEllipses;
@@ -8,6 +8,25 @@ namespace Utils.RevCurveloops
 {
     public static class RevCurveloopUtils
     {
+        public static BoundingBoxXYZ GetBoundingBoxOXY(this CurveLoop curveLoop)
+        {
+            var result = new BoundingBoxXYZ();
+            try
+            {
+                var ps = curveLoop.GetPoints();
+                var minx = ps.Min(x => x.X);
+                var miny = ps.Min(x => x.Y);
+                var maxx = ps.Max(x => x.X);
+                var maxy = ps.Max(x => x.Y);
+                result.Min = new XYZ(minx, miny, -1);
+                result.Max = new XYZ(maxx, maxy, 0);
+
+            }
+            catch (Exception)
+            {
+            }
+            return result;
+        }
         public static XYZ GetCenter(this CurveLoop curveLoop)
         {
             XYZ result = null;
@@ -30,38 +49,44 @@ namespace Utils.RevCurveloops
         }
         public static XYZ GetNormal(this CurveLoop curveLoop)
         {
-            var center = curveLoop.GetCenter();
+            var hasArc = curveLoop.Any(x => x is Arc);
+            var hasEllipes = curveLoop.Any(x => x is Ellipse);
             XYZ result = null;
             try
             {
-                var curves = curveLoop.Select(x => x).ToList();
-                var l1 = curves[0];
-                var l2 = curves[2];
+                if (hasArc)
+                {
+                    var arc = curveLoop.FirstOrDefault(x => x is Arc) as Arc;
+                    result = arc.Normal;
+                }
+                else if (hasEllipes)
+                {
+                    var arc = curveLoop.FirstOrDefault(x => x is Ellipse) as Ellipse;
+                    result = arc.Normal;
+                }
+                else
+                {
+                    var center = curveLoop.GetCenter();
+                    var curves = curveLoop.Select(x => x).ToList();
+                    var l1 = curves[0];
+                    var l2 = curves[0].Direction().IsParallel(curves[2].Direction())
+                        ? curves[1]
+                        : curves[2];
 
-                var dir1 = (l1.GetEndPoint(0) - center).Normalize();
-                var dir2 = (l1.GetEndPoint(1) - center).Normalize();
+                    var dir1 = l1.Direction().Normalize();
+                    var dir2 = l2.Direction().Normalize();
 
-                var normal = dir1.CrossProduct(dir2).Normalize();
-                var isFlowClock = curveLoop.IsCounterclockwise(normal);
-                result = isFlowClock ? normal : -normal;
+                    result = dir1.CrossProduct(dir2).Normalize();
+                    var isFlowClock = curveLoop.IsCounterclockwise(result);
+                    result = isFlowClock ? result : -result;
+                }
             }
             catch (Exception)
             {
             }
             return result;
         }
-        public static CurveLoop CreateOffset(this CurveLoop loop, double offset, XYZ normal)
-        {
-            try
-            {
-                return CurveLoop.CreateViaOffset(loop, offset, normal);
-            }
-            catch
-            {
-                return loop;
-            }
-        }
-        public static List<XYZ> GetPoints(this CurveLoop curves)
+        public static List<XYZ> GetCurveLoopPoints(this CurveLoop curves)
         {
             List<XYZ> list = new List<XYZ>();
             foreach (Curve curf in curves)
@@ -100,9 +125,21 @@ namespace Utils.RevCurveloops
             }
             return result;
         }
-        public static double GetArea(this CurveLoop loop)
+        public static void CreateModelCurve(this CurveLoop curveLoop, Document document)
         {
-            return ExporterIFCUtils.ComputeAreaOfCurveLoops(new List<CurveLoop>() { loop });
+            try
+            {
+                var nor = curveLoop.GetNormal();
+                foreach (var item in curveLoop)
+                {
+                    var plane = Plane.CreateByNormalAndOrigin(nor, item.GetEndPoint(0));
+                    var sket = SketchPlane.Create(document, plane);
+                    document.Create.NewModelCurve(item, sket);
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }
