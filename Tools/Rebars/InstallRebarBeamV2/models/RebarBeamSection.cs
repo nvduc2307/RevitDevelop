@@ -9,19 +9,22 @@
         public RebarBeamStirrup RebarBeamStirrup { get; set; }
     }
 
-    public class RebarBeamSectionStart : RebarBeamSection {
+    public class RebarBeamSectionStart : RebarBeamSection
+    {
         public RebarBeamSectionStart()
         {
             RebarBeamSectionType = (int)models.RebarBeamSectionType.SectionStart;
         }
     }
-    public class RebarBeamSectionMid : RebarBeamSection {
+    public class RebarBeamSectionMid : RebarBeamSection
+    {
         public RebarBeamSectionMid()
         {
             RebarBeamSectionType = (int)models.RebarBeamSectionType.SectionMid;
         }
     }
-    public class RebarBeamSectionEnd : RebarBeamSection {
+    public class RebarBeamSectionEnd : RebarBeamSection
+    {
         public RebarBeamSectionEnd()
         {
             RebarBeamSectionType = (int)models.RebarBeamSectionType.SectionEnd;

@@ -10,7 +10,23 @@ namespace RevitDevelop.Utils.RevCurves
             ps.Add(curves.Last().EP());
             return ps;
         }
-        public static  void CreateModelCurve(this Line line, Document document)
+        public static CurveLoop ToCurveLoop(this List<Curve> curves)
+        {
+            var result = new CurveLoop();
+            try
+            {
+                foreach (var item in curves)
+                {
+                    result.Append(item);
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return result;
+        }
+        public static void CreateModelCurve(this Line line, Document document)
         {
             try
             {

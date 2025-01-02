@@ -361,7 +361,7 @@
                                     </StackPanel>
                                     <StackPanel Margin="5,0,0,0" Grid.Column="1">
                                         <TextBlock Text="Spacing"/>
-                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionMid.RebarBeamStirrup.Spacing}"/>
+                                        <TextBox Text="{Binding ElementInstances.RebarBeamActive.RebarBeamSectionEnd.RebarBeamStirrup.Spacing}"/>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>

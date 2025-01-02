@@ -17,8 +17,8 @@ namespace Utils.BoundingBoxs
         public List<Solid> Solids { get; }
         public List<Curve> Curves { get; }
         public Outline Outline { get; set; }
-        public Line LineBox { get; private set; }
-        public RevBoxPoint BoxElementPoint { get; private set; }
+        public Line LineBox { get; set; }
+        public RevBoxPoint BoxElementPoint { get; set; }
         public RevBoxElement(Element ele)
         {
             Element = ele;
@@ -26,7 +26,13 @@ namespace Utils.BoundingBoxs
             Solids = GetSolids();
             Curves = GetCurves();
             VTX = GetVTX();
-            VTY = !VTX.IsParallel(XYZ.BasisZ) ? VTX.CrossProduct(XYZ.BasisZ).Normalize() : VTX.CrossProduct(XYZ.BasisX).Normalize();
+            VTY = !VTX.IsParallel(XYZ.BasisZ)
+                ? VTX.CrossProduct(XYZ.BasisZ).Normalize()
+                : VTX.CrossProduct(XYZ.BasisX).Normalize();
+            if (!VTX.IsParallel(XYZ.BasisZ))
+            {
+                VTY = !VTX.IsParallel(XYZ.BasisY) ? VTY.DotProduct(XYZ.BasisY) <= 0 ? -VTY : VTY : VTY.DotProduct(XYZ.BasisX) <= 0 ? -VTY : VTY;
+            }
             VTZ = VTX.CrossProduct(VTY).Normalize();
             Outline = GetOutLine(out RevBoxPoint boxElementPoint, out Line lineBox);
             BoxElementPoint = boxElementPoint;
@@ -34,7 +40,7 @@ namespace Utils.BoundingBoxs
         }
         public void GenerateCoordinateWithBaseVT(XYZ vtBase)
         {
-            if(VTX.IsParallel(vtBase))
+            if (VTX.IsParallel(vtBase))
             {
                 var vttg = VTZ;
                 VTZ = vtBase;
@@ -72,7 +78,7 @@ namespace Utils.BoundingBoxs
             }
             return result;
         }
-        private Outline GetOutLine(out RevBoxPoint boxElementPoint, out Line lineBox)
+        public Outline GetOutLine(out RevBoxPoint boxElementPoint, out Line lineBox)
         {
             lineBox = null;
             boxElementPoint = new RevBoxPoint();

@@ -19,7 +19,7 @@ namespace RevitDevelop.Utils.CompareElement
             if (!dir1.IsSameDirection(dir2)) return false;
             var p1 = c1.Midpoint().RayPointToFace(dir1, FaceCustom);
             var p2 = c2.Midpoint().RayPointToFace(dir2, FaceCustom);
-            return p1 == null ? false : p2 == null ? false : p1.IsSeem(p2);
+            return p1 == null ? false : p2 == null ? false : p1.IsSame(p2);
         }
 
         public int GetHashCode(Edge obj)

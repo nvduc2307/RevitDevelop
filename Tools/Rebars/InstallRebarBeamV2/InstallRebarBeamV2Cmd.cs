@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Nice3point.Revit.Toolkit.External;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.middleWares;
-using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels;
 
@@ -26,9 +25,10 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2
                     service.AddSingleton<InstallRebarBeamV2Cmd>();
                     service.AddSingleton<InstallRebarBeamV2ViewModel>();
                     service.AddSingleton<InstallRebarBeamV2MiddleWare>();
-                    service.AddSingleton<IDrawRebarBeamInCanvasSerice, DrawRebarBeamInCanvasSerice>();
                     service.AddSingleton<IRebarBeamTypeService, RebarBeamTypeService>();
+                    service.AddSingleton<IDrawRebarBeamInCanvasSerice, DrawRebarBeamInCanvasSerice>();
                     service.AddSingleton<IInstallRebarBeamInModelService, InstallRebarBeamInModelService>();
+                    service.AddSingleton<ISubInstallRebarBeamInModelService, SubInstallRebarBeamInModelService>();
                     var provider = service.BuildServiceProvider();
                     var installRebarBeamV2ViewModel = provider.GetService<InstallRebarBeamV2ViewModel>();
                     installRebarBeamV2ViewModel.MainView.ShowDialog();

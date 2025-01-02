@@ -174,7 +174,7 @@ namespace Utils.Geometries
             LineCustom result = null;
             try
             {
-                if (f1.Normal.IsSeem(f2.Normal)) throw new Exception();
+                if (f1.Normal.IsSame(f2.Normal)) throw new Exception();
                 var lDir = f1.Normal.CrossProduct(f2.Normal);
                 var lDir1 = lDir.CrossProduct(f1.Normal);
                 var p1 = f1.BasePoint.RayPointToFace(lDir1, f2);
@@ -295,7 +295,7 @@ namespace Utils.Geometries
             return ml;
         }
 
-        public static bool IsSeem(this XYZ p1, XYZ p2)
+        public static bool IsSame(this XYZ p1, XYZ p2)
         {
             return p1.X.IsAlmostEqual(p2.X) && p1.Y.IsAlmostEqual(p2.Y) && p1.Z.IsAlmostEqual(p2.Z);
         }

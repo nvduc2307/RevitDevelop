@@ -238,24 +238,24 @@ namespace RevitDevelop.Utils.RevElements.RevRebars
             }
             return results;
         }
-        public static void SetSolidRebar3DView(this Rebar rebar, Autodesk.Revit.DB.View view)
+        public static void SetSolidRebar3DView(this Rebar rebar, View view)
         {
-            if (rebar != null)
+            if (view is View3D view3d)
             {
-                View3D view3D = view as View3D;
-#if R21 || R22
-                if (view3D != null)
+                if (rebar != null)
                 {
-                    rebar.SetSolidInView(view3D, solid: true);
-                }
+#if REVIT2022 || REVIT2021
+                    rebar.SetSolidInView(view3d, true);
 #endif
+                    rebar.SetUnobscuredInView(view3d, true);
+                }
             }
         }
         public static double GetBarDiameter(this Rebar rebar)
         {
 
-#if (R21 || R20)
-         return rebar.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble();
+#if (REVIT2021 || REVIT2020)
+            return rebar.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble();
 #else
             return rebar.get_Parameter(BuiltInParameter.REBAR_MODEL_BAR_DIAMETER).AsDouble();
 #endif

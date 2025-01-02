@@ -26,7 +26,7 @@ namespace Utils.CompareElement
     {
         public bool Equals(XYZ x, XYZ y)
         {
-            return x.IsSeem(y);
+            return x.IsSame(y);
         }
 
         public int GetHashCode(XYZ obj)

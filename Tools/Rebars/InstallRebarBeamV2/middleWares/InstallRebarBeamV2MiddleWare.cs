@@ -6,6 +6,11 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.middleWares
 {
     public class InstallRebarBeamV2MiddleWare
     {
+        private ISubInstallRebarBeamInModelService _subInstallRebarBeamInModelService;
+        public InstallRebarBeamV2MiddleWare(ISubInstallRebarBeamInModelService subInstallRebarBeamInModelService)
+        {
+            _subInstallRebarBeamInModelService = subInstallRebarBeamInModelService;
+        }
         public bool RebarQuantityNotMatch(
             InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel,
             RebarBeamMainBarLevelType rebarBeamMainBarLevelType,
@@ -13,7 +18,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.middleWares
         {
             try
             {
-                var rebarGroups = GetRebarBeamGroupLevel(
+                var rebarGroups = _subInstallRebarBeamInModelService.GetRebarBeamGroupLevelInfo(
                     installRebarBeamV2ViewModel,
                     rebarBeamMainBarLevelType,
                     rebarBeamMainBarGroupType);
@@ -23,135 +28,6 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.middleWares
             {
                 return false;
             }
-        }
-        private List<RebarBeamMainBar> GetRebarBeamGroupLevel(
-            InstallRebarBeamV2ViewModel installRebarBeamV2ViewModel,
-            RebarBeamMainBarLevelType rebarBeamMainBarLevelType,
-            RebarBeamMainBarGroupType rebarBeamMainBarGroupType)
-        {
-            var result = new List<RebarBeamMainBar>();
-            try
-            {
-                switch (rebarBeamMainBarLevelType)
-                {
-                    case RebarBeamMainBarLevelType.RebarTop:
-                        switch (rebarBeamMainBarGroupType)
-                        {
-                            case RebarBeamMainBarGroupType.GroupLevel1:
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel1)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel1)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1)
-                                    .ToList());
-                                break;
-                            case RebarBeamMainBarGroupType.GroupLevel2:
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel2)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel2)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel2)
-                                    .ToList());
-                                break;
-                            case RebarBeamMainBarGroupType.GroupLevel3:
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionStart.RebarBeamTop.RebarBeamTopLevel3)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionMid.RebarBeamTop.RebarBeamTopLevel3)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel3)
-                                    .ToList());
-                                break;
-                        }
-                        break;
-                    case RebarBeamMainBarLevelType.RebarBot:
-                        switch (rebarBeamMainBarGroupType)
-                        {
-                            case RebarBeamMainBarGroupType.GroupLevel1:
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel1)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevel1)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel1)
-                                    .ToList());
-                                break;
-                            case RebarBeamMainBarGroupType.GroupLevel2:
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel2)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevel2)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel2)
-                                    .ToList());
-                                break;
-                            case RebarBeamMainBarGroupType.GroupLevel3:
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel3)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionMid.RebarBeamBot.RebarBeamBotLevel3)
-                                    .ToList());
-                                result.AddRange(
-                                    installRebarBeamV2ViewModel
-                                    .ElementInstances.RebarBeams
-                                    .Select(x => x.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel3)
-                                    .ToList());
-                                break;
-                        }
-                        break;
-                }
-            }
-            catch (Exception)
-            {
-            }
-            return result;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace RevitDevelop.Utils.RevElements.RevRebars
         private void GetRebarBarTypeProperties()
         {
             NameStyle = RebarBarType.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME).AsValueString();
-#if R21
+#if REVIT2021
             BarDiameter = RebarBarType.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble();
             ModelBarDiameter = RebarBarType.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble();
 #else

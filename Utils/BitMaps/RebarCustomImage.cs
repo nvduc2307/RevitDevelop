@@ -237,13 +237,13 @@ namespace RevitDevelop.Utils.BitMaps
                 var maxX = psX.LastOrDefault();
                 var minY = psY.FirstOrDefault();
                 var maxY = psY.LastOrDefault();
-                if (minX.IsSeem(maxX))
+                if (minX.IsSame(maxX))
                 {
                     width = 0;
                     height = minY.Distance(maxY);
                     return minY.MidPoint(maxY);
                 }
-                if (minY.IsSeem(maxY))
+                if (minY.IsSame(maxY))
                 {
                     height = 0;
                     width = minX.Distance(maxX);

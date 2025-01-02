@@ -14,6 +14,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
         public RebarBeamSectionStart RebarBeamSectionStart { get; set; }
         public RebarBeamSectionMid RebarBeamSectionMid { get; set; }
         public RebarBeamSectionEnd RebarBeamSectionEnd { get; set; }
+        public BeamStressRule BeamStressRule { get; set; }
         public RebarBeam(RevBoxElement revBoxBeam)
         {
             BeamId = int.Parse(revBoxBeam.Id.ToString(), System.Globalization.NumberStyles.Number);
@@ -21,6 +22,11 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
             NameType = "";
             BeamWidthMm = GetBeamWidthMm(revBoxBeam, out double beamHeightMm);
             BeamHeightMm = beamHeightMm;
+            BeamStressRule = new BeamStressRule()
+            {
+                Id = 0,
+                Stress = new List<double> { 0.25, 0.5, 0.25 }
+            };
         }
         public RebarBeam()
         {
@@ -65,7 +71,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
                 rebarBeam.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel1.QuantityChange = null;
                 rebarBeam.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel2.QuantityChange = null;
                 rebarBeam.RebarBeamSectionStart.RebarBeamBot.RebarBeamBotLevel3.QuantityChange = null;
-                
+
                 rebarBeam.RebarBeamSectionStart.RebarBeamSideBar.QuantitySideChange = null;
                 rebarBeam.RebarBeamSectionStart.RebarBeamTop.RebarGroupTypeChange = null;
                 rebarBeam.RebarBeamSectionStart.RebarBeamBot.RebarGroupTypeChange = null;
@@ -84,7 +90,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
                 rebarBeam.RebarBeamSectionMid.RebarBeamTop.RebarGroupTypeChange = null;
                 rebarBeam.RebarBeamSectionMid.RebarBeamBot.RebarGroupTypeChange = null;
             }
-            if(rebarBeam.RebarBeamSectionEnd != null)
+            if (rebarBeam.RebarBeamSectionEnd != null)
             {
                 rebarBeam.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel1.QuantityChange = null;
                 rebarBeam.RebarBeamSectionEnd.RebarBeamTop.RebarBeamTopLevel2.QuantityChange = null;
@@ -93,7 +99,7 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models
                 rebarBeam.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel1.QuantityChange = null;
                 rebarBeam.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel2.QuantityChange = null;
                 rebarBeam.RebarBeamSectionEnd.RebarBeamBot.RebarBeamBotLevel3.QuantityChange = null;
-                
+
                 rebarBeam.RebarBeamSectionEnd.RebarBeamSideBar.QuantitySideChange = null;
                 rebarBeam.RebarBeamSectionEnd.RebarBeamTop.RebarGroupTypeChange = null;
                 rebarBeam.RebarBeamSectionEnd.RebarBeamBot.RebarGroupTypeChange = null;

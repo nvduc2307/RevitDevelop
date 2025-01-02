@@ -1,4 +1,5 @@
 ﻿using HcBimUtils.DocumentUtils;
+using RevitDevelop.Utils.RevBoundingBoxs;
 using RevitDevelop.Utils.RevElements.RevAssemblies;
 using Utils.BoundingBoxs;
 
@@ -79,7 +80,19 @@ namespace RevitDevelop.Utils.RevElements
             try
             {
                 if (Element is AssemblyInstance ass)
+                {
                     elements = ass.GetMemberIds().Select(x => new RevBoxElement(x.ToElement())).ToList();
+                    foreach (var ele in elements)
+                    {
+                        ele.VTX = BoxElement.VTX;
+                        ele.VTY = BoxElement.VTY;
+                        ele.VTZ = BoxElement.VTZ;
+                        ele.GetOutLine(out RevBoxPoint boxElementPoint, out Line lineBox);
+                        ele.BoxElementPoint = boxElementPoint;
+                        ele.LineBox = lineBox;
+
+                    }
+                }
                 else elements.Add(BoxElement);
             }
             catch (Exception)

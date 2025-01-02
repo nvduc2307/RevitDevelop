@@ -45,7 +45,7 @@ namespace RevitDevelop.Tools.Modifies.AutoCutRebarBeamV2.models
             Parent = parent;
             Index = index;
             Rebar = rebar;
-#if R21
+#if REVIT2021
 
             DiameterMm = rebar.get_Parameter(BuiltInParameter.REBAR_BAR_DIAMETER).AsDouble().FootToMm();
 #else
@@ -239,13 +239,13 @@ namespace RevitDevelop.Tools.Modifies.AutoCutRebarBeamV2.models
                 var maxX = psX.LastOrDefault();
                 var minY = psY.FirstOrDefault();
                 var maxY = psY.LastOrDefault();
-                if (minX.IsSeem(maxX))
+                if (minX.IsSame(maxX))
                 {
                     width = 0;
                     height = minY.Distance(maxY);
                     return minY.MidPoint(maxY);
                 }
-                if (minY.IsSeem(maxY))
+                if (minY.IsSame(maxY))
                 {
                     height = 0;
                     width = minX.Distance(maxX);

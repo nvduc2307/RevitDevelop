@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.iservices;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.models;
-using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.service;
 using RevitDevelop.Tools.Rebars.InstallRebarBeamV2.views;
-using RevitDevelop.Utils.RevCurves;
 using System.IO;
 using System.Windows.Controls;
 using Utils.canvass;
 using Utils.Messages;
+using Utils.SkipWarnings;
 
 namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
 {
@@ -97,9 +96,12 @@ namespace RevitDevelop.Tools.Rebars.InstallRebarBeamV2.viewModels
             {
                 using (var ts = new Transaction(_cmd.Document, "name transaction"))
                 {
+                    ts.SkipAllWarnings();
                     ts.Start();
                     //--------
+                    _installRebarBeamInModelService.InstallRebarTop1(this);
                     _installRebarBeamInModelService.InstallRebarBot1(this);
+                    _installRebarBeamInModelService.InstallRebarStirrup(this);
                     //--------
                     ts.Commit();
                 }
