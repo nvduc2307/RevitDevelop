@@ -245,7 +245,7 @@ namespace RevitDevelop.Utils.RevElements.RevRebars
                 if (rebar != null)
                 {
 #if REVIT2022 || REVIT2021
-                    rebar.SetSolidInView(view3d, true);
+                    //rebar.SetSolidInView(view3d, true);
 #endif
                     rebar.SetUnobscuredInView(view3d, true);
                 }

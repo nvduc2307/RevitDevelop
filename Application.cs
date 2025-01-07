@@ -31,7 +31,6 @@ namespace RevitDevelop
 
         private void CreateRibbon()
         {
-
             PANEL_GENERAL.AddPushButton<StartupCommand>("Execute")
                 .SetImage("/RevitDevelop;component/Resources/Icons/PluginIcon16.png")
                 .SetLargeImage("/RevitDevelop;component/Resources/Icons/PluginIcon32.png");

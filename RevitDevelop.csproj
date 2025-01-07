@@ -66,6 +66,7 @@
         <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*" />
         <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*" />
         <PackageReference Include="Revit_All_Main_Versions_IFC_x64" Version="$(RevitVersion).*" />
+        <PackageReference Include="Revit_API_x64" Version="2024.0.2" />
     </ItemGroup>
 
     <ItemGroup>
